@@ -84,6 +84,7 @@ public class Bypass_Stream {
                 data_find_flag = false;
                 Diagnosis = false;
                 Result = new Parse().parseVIN(collect_data(DataField, ECU_ID[0]));
+
                 Log.e("Bypass_Stream","0902 Result : " + Result);
 
                 if(MainActivity.connectTextHandler != null){

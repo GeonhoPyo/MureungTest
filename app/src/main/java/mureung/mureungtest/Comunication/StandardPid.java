@@ -8,7 +8,7 @@ import android.util.Log;
 
 public class StandardPid {
     private static int pidCount = 0 ;
-    public String[] standardPid = {
+    /*public String[] standardPid = {
             "0902",
             "0100",
             "01010203",
@@ -62,11 +62,42 @@ public class StandardPid {
             "01818283",
             "01848586",
             "0187"
+    };*/
+
+    public String[] standardPid = {
+            "010d4910",
+            "010c112f",
+            "01230d63",
+            "01490c7a",
+            "01112304",
+            "010d4906",
+            "010c1108",
+            "01230d7c",
+            "01490c0b",
+            "01112305",
+            "010d495c",
+            "010c110f",
+            "01230d10",
+            "01490c2f",
+            "01112363",
+            "010d4911",
+            "010c1104",
+            "01230d06",
+            "01490c08",
+            "01112379",
+            "010d490b",
+            "010c1105",
+            "01230d5c",
+            "01490c07",
+            "01490c09",
+            "01112346",
+            "01112333",
+            "03" //27
     };
 
 
     public String startStandardPID(){
-        if(pidCount >= 53){
+        if(pidCount >= 28){
             pidCount = 0;
         }
         String PID = standardPid[pidCount];

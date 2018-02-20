@@ -62,12 +62,17 @@ public class Parse {
                 collection = String.valueOf(strValueResult);
 
             }
-            collection = collection.substring(3,collection.length());
+            try {
+                collection = collection.substring(3,collection.length());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             Result = collection;
 
 
             // TODO VIN 크롤링을 위해 VIN저장
-            new Bluetooth_Protocol().startPidData();
+            //new Bluetooth_Protocol().startPidData();
         }
         catch (Exception e){
             // 지원하지 않는 차량일때 데이터가 제대로 안넘온것 처리

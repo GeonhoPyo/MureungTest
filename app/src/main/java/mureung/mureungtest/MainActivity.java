@@ -30,7 +30,7 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView connectText;
+    TextView connectText,dataText;
     public static Handler connectTextHandler;
     public static Context mainContext;
 
@@ -42,17 +42,27 @@ public class MainActivity extends AppCompatActivity {
         mainChangeMenu(new MainView());
         connectText = findViewById(R.id.connectText);
         connectText.setText("연결 없음");
+        dataText = findViewById(R.id.dataText);
+        dataText.setText("Data");
+
         connectTextHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
 
-                if(msg.what == 1){
-                    String connectState = String.valueOf(msg.obj);
-                    connectText.setText(connectState);
+                switch (msg.what){
+                    case 1 :
+                        String connectState = String.valueOf(msg.obj);
+                        connectText.setText(connectState);
+                        break;
+                    case 2 :
+                        Toast.makeText(MainActivity.mainContext,String.valueOf(msg.obj),Toast.LENGTH_LONG).show();
+                        break;
+                    case 3 :
+                            dataText.setText(String.valueOf(msg.obj));
+                        break;
                 }
-                else if(msg.what ==2){
-                    Toast.makeText(MainActivity.mainContext,String.valueOf(msg.obj),Toast.LENGTH_LONG).show();
-                }
+
+
                 return true;
             }
         });
@@ -62,20 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private String test(String received_text){
-        if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
-            StringBuilder strRecivedText = new StringBuilder();
-            for(int i = 0 ; i < received_text.length() ; i ++){
-
-                String checkText = received_text.substring(i,i+1);
-                if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
-                    strRecivedText.append(checkText);
-                }
-            }
-            received_text = String.valueOf(strRecivedText);
-        }
-        return received_text;
-    }
 
     @Override
     protected void onDestroy() {

@@ -47,7 +47,15 @@ public class MakeData {
         }
 
 
-        fileName = "T"+new Time_DataBridge().getLogTime()+"__N"+currentValue+"__V"+vin.substring(0,3)+"__M"+carModel;
+        String vinSubString = null;
+        try {
+            vinSubString = vin.substring(0,3);
+        }catch (Exception e){
+            vinSubString = "NULL";
+            e.printStackTrace();
+        }
+
+        fileName = "T"+new Time_DataBridge().getLogTime()+"__N"+currentValue+"__V"+vinSubString+"__M"+carModel;
 
 
         new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");

@@ -260,6 +260,7 @@ public class Bluetooth_Protocol {
         final int ATECHO_SETTING = 5;
         final int ATLINEFEED_SETTING = 6;
         final int ATSPACE_SETTING = 7;
+        final int ATAT0_SETTING = 8;
 
         private boolean ATZ_FLAG = false;
         private boolean ATSP0_FLAG = false;
@@ -268,6 +269,15 @@ public class Bluetooth_Protocol {
         private boolean ATECHO_FLAG = false;
         private boolean ATLINEFEED_FLAG = false;
         private boolean ATSPACE_FLAG = false;
+        private boolean ATAT0_FLAG = false;
+
+        private String[] protocol = {"3","6","1","2","4","5","7","8","9","A","B","C"};
+        private int protocolCount = 0;
+        private boolean Protocol_FLAG=false;
+        private boolean ProtocolCheck_FLAG = false;
+
+
+        private int NoDataCount = 0;
 
         //통신에 필요한 Socket 을 선언 및 접속 하는 부분 = 블루투스 송수신 접속
         private ConnectedThread(BluetoothSocket socket) {
@@ -333,21 +343,63 @@ public class Bluetooth_Protocol {
                             /*strLog = (received_text + "  \r");
                             new ErrorLogManager().saveErrorLog(strLog);*/
                             if(ATZ_FLAG){
-                                ATZ_FLAG = false;
-                                ATSP0_FLAG = true;
+
+                                Log.e("test","test Protocol_FLAG : " + Protocol_FLAG + " , ProtocolCheck_FLAG : " + ProtocolCheck_FLAG);
+                                if(Protocol_FLAG){
+                                    if(ProtocolCheck_FLAG){
+                                        ProtocolCheck_FLAG = false;
+                                        if(received_text.contains("ERROR")||received_text.contains("NO")||received_text.contains("BUS")){
+                                            // 데이터를 요청해봤지만 제대로 안넘어옴 다시 프로토콜 세팅
+                                            setObdProtocol(protocol[protocolCount]);
+                                            protocolCount++;
+                                            if(protocolCount>=12){
+                                                protocolCount =0;
+                                            }
+                                            Protocol_FLAG = true;
+
+                                        }else {
+                                            //통신프로토콜 찾음
+                                            ATZ_FLAG = false;
+                                            ATSP0_FLAG = false;
+                                            btSetting(ATECHO_SETTING);
+                                        }
+                                    }else {
+                                        String testPid = "010c";
+                                        testPid += "\r";
+                                        write(testPid.getBytes());
+                                        ProtocolCheck_FLAG = true;
+                                    }
+                                }else {
+                                    Protocol_FLAG = true;
+                                    setObdProtocol(protocol[protocolCount]);
+                                    protocolCount++;
+                                    if(protocolCount>=12){
+                                        protocolCount =0;
+                                    }
+                                }
+
+                                received_text = "";
+
+
+
+
+                                /*ATZ_FLAG = false;
+
                                 btSetting(ATSP0_SETTING);
                                 if(MainActivity.connectTextHandler!=null){
                                     //MainActivity.connectTextHandler.obtainMessage(2,received_text).sendToTarget();
                                     received_text = received_text.replace("\r","");
                                     obdVersion = received_text;
                                 }
-                                received_text = "";
-                            }else if(ATSP0_FLAG){
+                                received_text = "";*/
+
+                            }
+                            /*else if(ATSP0_FLAG){
                                 ATSP0_FLAG = false;
-                                ATECHO_FLAG = true;
                                 btSetting(ATECHO_SETTING);
                                 received_text = "";
-                            }else if(ATECHO_FLAG){
+                            }*/
+                            else if(ATECHO_FLAG){
                                 ATECHO_FLAG = false;
                                 btSetting(ATSPACE_SETTING);
                                 received_text = "";
@@ -356,6 +408,9 @@ public class Bluetooth_Protocol {
                                 btSetting(ATLINEFEED_SETTING);
                                 received_text = "";
                             }else if(received_text.contains("L0")&&ATLINEFEED_FLAG){
+                                btSetting(ATAT0_SETTING);
+                                received_text = "";
+                            }else if(received_text.contains("AT0")&&ATAT0_FLAG){
                                 btSetting(ATH1_SETTING);
                                 received_text = "";
                             }else if(received_text.contains("H1")&& ATH1_FLAG){
@@ -421,6 +476,26 @@ public class Bluetooth_Protocol {
                                 new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime(),"----------------------------------------------------------");
                             }
 
+                            if(MainActivity.connectTextHandler != null){
+                                MainActivity.connectTextHandler.obtainMessage(3,received_text).sendToTarget();
+                            }
+
+                            if(received_text.contains("NO DATA")){
+                                NoDataCount +=1;
+                                if(NoDataCount > 56){
+                                    //연결재시도
+                                    NoDataCount = 0;
+                                    try {
+                                        if(MainActivity.connectTextHandler !=null){
+                                            MainActivity.connectTextHandler.obtainMessage(2,"NoDataCount 56 !!! ").sendToTarget();
+                                        }
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else {
+                                NoDataCount = 0;
+                            }
 
                             try {
                                 bypass_stream.NewStart(received_text);
@@ -495,11 +570,21 @@ public class Bluetooth_Protocol {
 
     }
 
-    public void startPidData(){
+    /**
+     * 1 ~ 12
+     * */
+    private void setObdProtocol(String protocol){
+        String pushData = null;
+        pushData = "AT SP"+protocol;
+        pushData+= "\r";
+        write(pushData.getBytes());
+    }
+
+    /*public void startPidData(){
         String startPid = "0100";
         startPid +="\r";
         write(startPid.getBytes());
-    }
+    }*/
 
     public void checkPage(){
         switch (PageStr.getPageStrData()){
@@ -618,6 +703,7 @@ public class Bluetooth_Protocol {
         SETTING_FLAG = false;
         setState(STATE_LISTEN);
         if(mConnectedThread != null){
+
             mConnectedThread.VIN_FLAG = false;
             mConnectedThread.ATH1_FLAG = false;
             mConnectedThread.ATSP0_FLAG = false;
@@ -743,7 +829,7 @@ public class Bluetooth_Protocol {
     private void btSetting(int settingNum){
         switch (settingNum){
             case 1 :
-                String strATZ = "ATZ";
+                String strATZ = "AT Z";
                 strATZ += "\r";
                 write(strATZ.getBytes());
                 mConnectedThread.ATZ_FLAG = true;
@@ -752,6 +838,7 @@ public class Bluetooth_Protocol {
                 String strATSP0 = "AT SP0";
                 strATSP0 += "\r";
                 write(strATSP0.getBytes());
+                mConnectedThread.ATSP0_FLAG = true;
                 break;
             case 3 :
                 String strATH1 = "AT H1";
@@ -770,6 +857,7 @@ public class Bluetooth_Protocol {
                 String strEcho = "AT E1";
                 strEcho += "\r";
                 write(strEcho.getBytes());
+                mConnectedThread.ATECHO_FLAG = true;
                 break;
             case 6 :
                 String strLineFeed = "AT L0";
@@ -784,6 +872,12 @@ public class Bluetooth_Protocol {
                 write(strSpace.getBytes());
                 mConnectedThread.ATSPACE_FLAG = true;
                 break;
+
+            case 8 :
+                String strTimeout = "AT AT0";
+                strTimeout += "\r";
+                write(strTimeout.getBytes());
+                mConnectedThread.ATAT0_FLAG = true;
 
         }
 
