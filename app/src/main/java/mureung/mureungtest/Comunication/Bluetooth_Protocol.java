@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.UiThread;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -273,6 +274,7 @@ public class Bluetooth_Protocol {
 
         private String[] protocol = {"3","6","1","2","4","5","7","8","9","A","B","C"};
         private int protocolCount = 0;
+        private int protocolSaveCount = 0;
         private boolean Protocol_FLAG=false;
         private boolean ProtocolCheck_FLAG = false;
 
@@ -351,6 +353,7 @@ public class Bluetooth_Protocol {
                                         if(received_text.contains("ERROR")||received_text.contains("NO")||received_text.contains("BUS")){
                                             // 데이터를 요청해봤지만 제대로 안넘어옴 다시 프로토콜 세팅
                                             setObdProtocol(protocol[protocolCount]);
+                                            protocolSaveCount = protocolCount;
                                             protocolCount++;
                                             if(protocolCount>=12){
                                                 protocolCount =0;
@@ -360,11 +363,14 @@ public class Bluetooth_Protocol {
                                         }else {
                                             //통신프로토콜 찾음
                                             ATZ_FLAG = false;
-                                            ATSP0_FLAG = false;
-                                            btSetting(ATECHO_SETTING);
+                                            ATSP0_FLAG = true;
+                                            String saveProtocol = "AT SP"+protocol[protocolSaveCount];
+                                            saveProtocol += "\r";
+                                            write(saveProtocol.getBytes());
+
                                         }
                                     }else {
-                                        String testPid = "010c";
+                                        String testPid = "010d";
                                         testPid += "\r";
                                         write(testPid.getBytes());
                                         ProtocolCheck_FLAG = true;
@@ -399,6 +405,11 @@ public class Bluetooth_Protocol {
                                 btSetting(ATECHO_SETTING);
                                 received_text = "";
                             }*/
+                            else if(ATSP0_FLAG){
+                                ATSP0_FLAG = false;
+                                btSetting(ATECHO_SETTING);
+                                received_text = "";
+                            }
                             else if(ATECHO_FLAG){
                                 ATECHO_FLAG = false;
                                 btSetting(ATSPACE_SETTING);
@@ -503,11 +514,6 @@ public class Bluetooth_Protocol {
 
                             }
 
-                            if(PidTestFlag){
-                                pushPID();
-                            }
-
-
                             //Data TextView 로 보냄
                             if(dataHandler != null) {
                                 dataHandler.obtainMessage(MESSAGE_READ, bytes, 0, received_text)
@@ -519,6 +525,10 @@ public class Bluetooth_Protocol {
                             }*/
                             received_text = "";
 
+
+                            if(PidTestFlag){
+                                pushPID();
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -540,7 +550,13 @@ public class Bluetooth_Protocol {
         }
 
         public void pushPID(){
-            //여기서 유저 정보 없으면 못하게 막아라
+            //여기서 약간 딜레이 줘야하나
+            /*try {
+                sleep(50);
+                write(new StandardPid().startStandardPID().getBytes());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
             write(new StandardPid().startStandardPID().getBytes());
 
         }
@@ -575,7 +591,7 @@ public class Bluetooth_Protocol {
      * */
     private void setObdProtocol(String protocol){
         String pushData = null;
-        pushData = "AT SP"+protocol;
+        pushData = "AT TP"+protocol;
         pushData+= "\r";
         write(pushData.getBytes());
     }
