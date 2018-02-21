@@ -325,7 +325,7 @@ public class Bluetooth_Protocol {
                     //String 으로 변환
                     bytes = mmInStream.read(readBuffer,0,readBuffer.length);
                     final String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
-                    //Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
+                    Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
                     if(!SETTING_FLAG){

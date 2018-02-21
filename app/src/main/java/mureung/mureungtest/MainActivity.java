@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -44,6 +46,19 @@ public class MainActivity extends AppCompatActivity {
         connectText.setText("연결 없음");
         dataText = findViewById(R.id.dataText);
         dataText.setText("Data");
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager !=null){
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if(networkInfo!=null){
+                Log.e("test","ConnectivityManager.TYPE_WIFI : " + ConnectivityManager.TYPE_WIFI);
+                Log.e("test","ConnectivityManager.TYPE_MOBILE : " + ConnectivityManager.TYPE_MOBILE);
+                Log.e("test","networkInfo : " + networkInfo.getType());
+            }else {
+                Log.e("test","networkInfo : null");
+            }
+
+        }
 
         connectTextHandler = new Handler(new Handler.Callback() {
             @Override
