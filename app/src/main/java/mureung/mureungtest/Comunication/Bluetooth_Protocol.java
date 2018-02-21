@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.UiThread;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -274,9 +273,10 @@ public class Bluetooth_Protocol {
 
         private String[] protocol = {"3","6","1","2","4","5","7","8","9","A","B","C","0"};
         private int protocolCount = 0;
-        private int protocolSaveCount = 0;
         private boolean Protocol_FLAG=false;
         private boolean ProtocolCheck_FLAG = false;
+        private int saveProtocolCount = 0;
+
         private boolean NoData_FLAG = false;
 
         private int NoDataCount = 0;
@@ -342,16 +342,18 @@ public class Bluetooth_Protocol {
                                 }
                                 received_text = String.valueOf(strRecivedText);
                             }
-                            //Log.e("Bluetooth_Protocol","received_text !Setting_Flag : " + received_text);
+                            /*strLog = (received_text + "  \r");
+                            new ErrorLogManager().saveErrorLog(strLog);*/
                             if(ATZ_FLAG){
 
+                                Log.e("test","test Protocol_FLAG : " + Protocol_FLAG + " , ProtocolCheck_FLAG : " + ProtocolCheck_FLAG);
                                 if(Protocol_FLAG){
                                     if(ProtocolCheck_FLAG){
                                         ProtocolCheck_FLAG = false;
                                         if(received_text.contains("ERROR")||received_text.contains("NO")||received_text.contains("BUS")){
                                             // 데이터를 요청해봤지만 제대로 안넘어옴 다시 프로토콜 세팅
                                             setObdProtocol(protocol[protocolCount]);
-                                            protocolSaveCount = protocolCount;
+                                            saveProtocolCount = protocolCount;
                                             protocolCount++;
                                             if(protocolCount>=13){
                                                 protocolCount =0;
@@ -361,11 +363,8 @@ public class Bluetooth_Protocol {
                                         }else {
                                             //통신프로토콜 찾음
                                             ATZ_FLAG = false;
-                                            ATSP0_FLAG = true;
-
-                                            String saveProtocol = "AT SP"+protocol[protocolSaveCount];
-                                            saveProtocol += "\r";
-                                            write(saveProtocol.getBytes());
+                                            ATSP0_FLAG = false;
+                                            btSetting(ATECHO_SETTING);
                                         }
                                     }else {
                                         String testPid = "010c";
@@ -375,19 +374,31 @@ public class Bluetooth_Protocol {
                                     }
                                 }else {
                                     Protocol_FLAG = true;
-                                    setObdProtocol(protocol[protocolSaveCount]);
+                                    setObdProtocol(protocol[protocolCount]);
                                 }
 
-                                //ATZ_FLAG = false;
-                                //ATSP0_FLAG = true;
-                                //btSetting(ATSP0_SETTING);
                                 received_text = "";
-                            }else if(ATSP0_FLAG){
+
+
+
+
+                                /*ATZ_FLAG = false;
+
+                                btSetting(ATSP0_SETTING);
+                                if(MainActivity.connectTextHandler!=null){
+                                    //MainActivity.connectTextHandler.obtainMessage(2,received_text).sendToTarget();
+                                    received_text = received_text.replace("\r","");
+                                    obdVersion = received_text;
+                                }
+                                received_text = "";*/
+
+                            }
+                            /*else if(ATSP0_FLAG){
                                 ATSP0_FLAG = false;
-                                ATECHO_FLAG = true;
                                 btSetting(ATECHO_SETTING);
                                 received_text = "";
-                            }else if(ATECHO_FLAG){
+                            }*/
+                            else if(ATECHO_FLAG){
                                 ATECHO_FLAG = false;
                                 btSetting(ATSPACE_SETTING);
                                 received_text = "";
@@ -396,6 +407,9 @@ public class Bluetooth_Protocol {
                                 btSetting(ATLINEFEED_SETTING);
                                 received_text = "";
                             }else if(received_text.contains("L0")&&ATLINEFEED_FLAG){
+                                btSetting(ATAT0_SETTING);
+                                received_text = "";
+                            }else if(received_text.contains("AT0")&&ATAT0_FLAG){
                                 btSetting(ATH1_SETTING);
                                 received_text = "";
                             }else if(received_text.contains("H1")&& ATH1_FLAG){
@@ -403,14 +417,13 @@ public class Bluetooth_Protocol {
                                 received_text = "";
                             }else if(received_text.contains("0902")&& VIN_FLAG){
                                 if(received_text.contains("SEARCHING")){
-                                    received_text = received_text.replace(".\r","");
-                                    received_text = received_text.replace(".","");
-                                    received_text = received_text.replace("SEARCHING","");
+                                    received_text = received_text.replace("SEARCHING...\r","");
                                 }
                                 if(received_text.contains("\r")){
                                     StringBuilder strValueResult = new StringBuilder();
                                     for(int i = 0 ; i < received_text.length() ; i++){
                                         String checkRecevedText = received_text.substring(i,i+1);
+                                        String result = null;
                                         if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkRecevedText)){
                                             strValueResult.append(checkRecevedText);
                                         }
@@ -418,6 +431,10 @@ public class Bluetooth_Protocol {
                                     received_text = String.valueOf(strValueResult);
 
                                 }
+                                if(dataVIN != null){
+                                    dataVIN = null;
+                                }
+                                dataVIN = received_text;
                                 try {
                                     bypass_stream.NewStart(received_text);
                                 }catch (Exception e){
@@ -426,33 +443,44 @@ public class Bluetooth_Protocol {
 
                                 received_text = "";
                                 SETTING_FLAG = true;
+
                             }
                         }
 
 
                     }else if(SETTING_FLAG){
-                        //스케줄로 받아온 값들을 여기서 처리
-                        if(received_text.contains(">"))
-                        {
-                            OBD_CONNECTSTATE = true;
-                            try {
-                                if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
-                                    StringBuilder strRecivedText = new StringBuilder();
-                                    for(int i = 0 ; i < received_text.length() ; i ++){
 
-                                        String checkText = received_text.substring(i,i+1);
-                                        if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
-                                            strRecivedText.append(checkText);
-                                        }
+                        if(strBuffer.contains(">"))
+                        {
+
+
+                            OBD_CONNECTSTATE = true;
+                            //Response Time
+
+                            if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
+                                StringBuilder strRecivedText = new StringBuilder();
+                                for(int i = 0 ; i < received_text.length() ; i ++){
+
+                                    String checkText = received_text.substring(i,i+1);
+                                    if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
+                                        strRecivedText.append(checkText);
                                     }
-                                    received_text = String.valueOf(strRecivedText);
                                 }
-                            }catch (Exception e){
-                                e.printStackTrace();
+                                received_text = String.valueOf(strRecivedText);
                             }
-                            Log.e("ConnectedThread","received_text : " + received_text);
+                            if(PageStr.getPageStrData().equals(PageStr.Terminal)){
+                                new TerminalView().setListData(null,received_text);
+                                String logPullData = received_text.replace("\r","");
+                                new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime()," PULL DATA : " + logPullData);
+                                new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime(),"----------------------------------------------------------");
+                            }
+
+                            if(MainActivity.connectTextHandler != null){
+                                MainActivity.connectTextHandler.obtainMessage(3,received_text).sendToTarget();
+                            }
+
                             if(received_text.contains("NO DATA")){
-                                Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
+                                //Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
                                 NoDataCount +=1;
                                 if(NoDataCount > 56){
                                     //연결재시도
@@ -460,7 +488,7 @@ public class Bluetooth_Protocol {
                                     NoData_FLAG= true;
                                     String pushSP0 = "AT SP0";
                                     pushSP0 += "\r";
-                                    Log.e("ConnectedThread","pushSP0 : " + pushSP0);
+                                    //Log.e("ConnectedThread","pushSP0 : " + pushSP0);
                                     write(pushSP0.getBytes());
                                     /*try {
                                         //new Bluetooth_Protocol().cancel();
@@ -500,13 +528,13 @@ public class Bluetooth_Protocol {
                                 if(received_text.contains("SP0")){
                                     String pushData = "010c";
                                     pushData += "\r";
-                                    Log.e("ConnectedThread","pushData : " + pushData);
+                                    //Log.e("ConnectedThread","pushData : " + pushData);
                                     write(pushData.getBytes());
                                 }else if(received_text.contains("010c")){
 
-                                    String pushProtocol = "AT SP"+protocol[protocolSaveCount];
+                                    String pushProtocol = "AT SP"+protocol[saveProtocolCount];
                                     pushProtocol += "\r";
-                                    Log.e("ConnectedThread","pushProtocol : " + pushProtocol);
+                                    //Log.e("ConnectedThread","pushProtocol : " + pushProtocol);
                                     write(pushProtocol.getBytes());
                                     NoData_FLAG = false;
                                 }
@@ -516,16 +544,26 @@ public class Bluetooth_Protocol {
                                 try {
                                     bypass_stream.NewStart(received_text);
                                 }catch (Exception e){
-                                    e.printStackTrace();
+
                                 }
 
-                                if(mmSocket.isConnected()){
+                                if(PidTestFlag){
                                     pushPID();
                                 }
                             }
 
 
 
+
+                            //Data TextView 로 보냄
+                            if(dataHandler != null) {
+                                dataHandler.obtainMessage(MESSAGE_READ, bytes, 0, received_text)
+                                        .sendToTarget();
+                            }
+                            /*if(PageStr.getPageStrData().equals(PageStr.Terminal)){
+                                received_text.replace("\r","");
+                                new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime()," PULL DATA : " + received_text);
+                            }*/
                             received_text = "";
 
                         }
@@ -549,13 +587,7 @@ public class Bluetooth_Protocol {
         }
 
         public void pushPID(){
-            //여기서 약간 딜레이 줘야하나
-            /*try {
-                sleep(50);
-                write(new StandardPid().startStandardPID().getBytes());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
+            //여기서 유저 정보 없으면 못하게 막아라
             write(new StandardPid().startStandardPID().getBytes());
 
         }
@@ -590,7 +622,7 @@ public class Bluetooth_Protocol {
      * */
     private void setObdProtocol(String protocol){
         String pushData = null;
-        pushData = "AT TP"+protocol;
+        pushData = "AT SP"+protocol;
         pushData+= "\r";
         write(pushData.getBytes());
     }
