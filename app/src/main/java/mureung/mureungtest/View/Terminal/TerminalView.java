@@ -76,6 +76,8 @@ public class TerminalView extends Fragment implements View.OnClickListener {
         });
 
 
+        new Bluetooth_Protocol().pushATSetting();
+
         return view;
     }
 

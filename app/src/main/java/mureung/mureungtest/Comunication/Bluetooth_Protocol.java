@@ -442,7 +442,7 @@ public class Bluetooth_Protocol {
                             }else if(received_text.contains("DPN")&&ATDPN_FLAG){
                                 protocolDataNum = null;
                                 protocolDataNum = received_text;
-
+                                btSetting(ATDP_SETTING);
                                 received_text = "";
 
                             }else if(received_text.contains("DP")&&ATDP_FLAG){

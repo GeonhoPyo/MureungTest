@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case PageStr.PidTestView :
                 mainChangeMenu(new MainView());
+                MainView.PID = null;
 
                 break;
             case PageStr.BluetoothConnect:
