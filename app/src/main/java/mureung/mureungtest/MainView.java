@@ -27,12 +27,15 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
 public class MainView extends Fragment implements View.OnClickListener {
 
-    LinearLayout pidTestBtn,terminalButton,emailButton;
+    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton;
     LinearLayout bluetoothConnect;
     ImageView bluetoothIcon;
     static Intent outIntent;
-    private static Handler bluetoothIconHandler;
+    public static Handler mainViewHandler;
     public static boolean bluetoothState;
+    public final String ALLPID = "ALLPID";
+    public final String SCHEDULEPID = "SCHEDULEPID";
+    public static String PID = null;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +47,11 @@ public class MainView extends Fragment implements View.OnClickListener {
         bluetoothConnect.setOnClickListener(this);
         terminalButton = (LinearLayout) view.findViewById(R.id.terminalButton);
         terminalButton.setOnClickListener(this);
+
+        pidScheduleBtn = (LinearLayout) view.findViewById(R.id.pidScheduleBtn);
+        pidScheduleBtn.setOnClickListener(this);
+        diagnosisButton = (LinearLayout)view.findViewById(R.id.diagnosisButton);
+        diagnosisButton.setOnClickListener(this);
         bluetoothIcon = (ImageView) view.findViewById(R.id.bluetoothIcon);
         /*emailButton = ( LinearLayout)view.findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this);*/
@@ -51,7 +59,7 @@ public class MainView extends Fragment implements View.OnClickListener {
 
         PageStr.setPageStrData(PageStr.Mainview);
         PidTestFlag = false;
-        bluetoothIconHandler = new Handler(new Handler.Callback() {
+        mainViewHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
 
@@ -61,6 +69,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                         break;
                     case 2 :
                         bluetoothIcon.setImageDrawable(MainActivity.mainContext.getDrawable(R.drawable.obd_off));
+                        break;
                 }
                 return true;
             }
@@ -87,11 +96,11 @@ public class MainView extends Fragment implements View.OnClickListener {
 
     public void setObdIcon(boolean state){
         try {
-            if(bluetoothIconHandler != null){
+            if(mainViewHandler != null){
                 if(state){
-                    bluetoothIconHandler.obtainMessage(1,null).sendToTarget();
+                    mainViewHandler.obtainMessage(1,null).sendToTarget();
                 }else{
-                    bluetoothIconHandler.obtainMessage(2,null).sendToTarget();
+                    mainViewHandler.obtainMessage(2,null).sendToTarget();
                 }
             }
         }catch (Exception e){
@@ -103,10 +112,14 @@ public class MainView extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.pidTestBtn:
+                Bluetooth_Protocol.SETTING_FLAG = false;
+                PID = ALLPID;
+                new Bluetooth_Protocol().pushATSetting();
+
                 if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
-                    ((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
+                    //((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
                 }else {
-                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시후 시도 해보십시오.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 기다려 주십시오. ",Toast.LENGTH_LONG).show();
                 }
 
                 break;
@@ -117,6 +130,20 @@ public class MainView extends Fragment implements View.OnClickListener {
                 ((MainActivity)getActivity()).mainChangeMenu(new TerminalView());
                 break;
 
+            case R.id.pidScheduleBtn :
+                Bluetooth_Protocol.SETTING_FLAG = false;
+                PID = SCHEDULEPID;
+                new Bluetooth_Protocol().pushATSetting();
+
+                if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
+                    ((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
+                }else {
+                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시후 시도 해보십시오.",Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.diagnosisButton :
+                break;
             /*case R.id.emailButton:
                 Intent email = new Intent(Intent.ACTION_SEND);
                 email.setType("plain/text");
@@ -129,7 +156,5 @@ public class MainView extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void displayMirror(){
 
-    }
 }

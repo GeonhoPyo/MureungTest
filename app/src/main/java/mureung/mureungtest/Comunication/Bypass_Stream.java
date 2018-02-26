@@ -87,12 +87,12 @@ public class Bypass_Stream {
 
                 Log.e("Bypass_Stream","0902 Result : " + Result);
 
-                if(MainActivity.connectTextHandler != null){
-                    MainActivity.connectTextHandler.obtainMessage(1,"연결됨 " + Result).sendToTarget();
+                if(MainActivity.MainActivityHandler != null){
+                    MainActivity.MainActivityHandler.obtainMessage(1,"연결됨 " + Result).sendToTarget();
                 }
-                new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
+                /*new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();*/
 
-                dataVIN+= strVIN;
+                //dataVIN+= strVIN;
 
             }
 

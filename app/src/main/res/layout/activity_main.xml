@@ -6,17 +6,30 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:background="#919191">
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:id="@+id/connectText"/>
+        android:layout_height="90dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:id="@+id/connectText"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:id="@+id/dataText"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:id="@+id/protocolText"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:id="@+id/dataText"/>
+
+    </LinearLayout>
+
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -2,10 +2,12 @@ package mureung.mureungtest.Tool;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
+import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.DataBase.PIDTEST;
 import mureung.mureungtest.DataBase.PIDTEST_DBHelper;
+import mureung.mureungtest.MainActivity;
+import mureung.mureungtest.MainView;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.obdVersion;
 import static mureung.mureungtest.Comunication.Bypass_Stream.dataVIN;
@@ -59,11 +61,41 @@ public class MakeData {
 
 
         new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");
+        if(MainView.PID != null){
+            new ErrorLogManager().saveErrorLog(fileName,"//-------------"+MainView.PID+"-----------");
+        }
+        new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");
+        new ErrorLogManager().saveErrorLog(fileName,"통신 프로토콜 표 ----");
+        new ErrorLogManager().saveErrorLog(fileName,"0. Auto");
+        new ErrorLogManager().saveErrorLog(fileName,"1. SAE J1850 PWM (41.6 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"2. SAE J1850 VPW (10.4 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"3. ISO 9141-2 (5 baud init, 10.4 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"4. ISO 14230-4 KWP (5 baud init, 10.4 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"5. ISO 14230-4 KWP (fast init, 10.4 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"6. ISO 15765-4 CAN (11 bit ID , 500 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"7. ISO 15765-4 CAN (29 bit ID , 500 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"8. ISO 15765-4 CAN (11 bit ID , 250 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"9. ISO 15765-4 CAN (29 bit ID , 250 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"A. SAE J1939 CAN (29 bit ID , 250 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"B. USER1 CAN (11 bit ID , 125 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"C. USER2 CAN (11 bit ID , 50 kbaud)");
+
+        new ErrorLogManager().saveErrorLog(fileName,"------------------");
+        if(Bluetooth_Protocol.protocolDataNum!=null){
+            new ErrorLogManager().saveErrorLog(fileName,"통신 프로토콜 Number : " + Bluetooth_Protocol.protocolDataNum);
+        }
+        if(Bluetooth_Protocol.protocolData!=null){
+            new ErrorLogManager().saveErrorLog(fileName,"통신 프로토콜 : " + Bluetooth_Protocol.protocolData);
+        }
+
+
+        new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");
         new ErrorLogManager().saveErrorLog(fileName,"차수 : " + currentValue);
         new ErrorLogManager().saveErrorLog(fileName,"시간 정보 ----------------------------");
         new ErrorLogManager().saveErrorLog(fileName,"시간 : " + dataDate);
         new ErrorLogManager().saveErrorLog(fileName,"차량 정보 ----------------------------");
         new ErrorLogManager().saveErrorLog(fileName,"VIN Parsing : " + dataVIN);
+
         dataVIN = null;
         new ErrorLogManager().saveErrorLog(fileName,"VIN : " + vin);
         new ErrorLogManager().saveErrorLog(fileName,"제조사 : " + carMaker);
@@ -103,6 +135,10 @@ public class MakeData {
 
 
         FinishLog_FLAG = true;
+
+        if(MainActivity.MainActivityHandler !=null){
+            MainActivity.MainActivityHandler.obtainMessage(4,null).sendToTarget();
+        }
 
     }
 

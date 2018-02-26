@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.MainView;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;
 import mureung.mureungtest.Tool.ErrorLogManager;
@@ -31,7 +32,12 @@ public class PidTestMainView extends Fragment {
         PageStr.setPageStrData(PageStr.PidTestView);
 
 
-        new Bluetooth_Protocol().checkPage();
+        if(MainView.PID != null){
+            new Bluetooth_Protocol().checkPage(MainView.PID);
+            Log.e("test","MainView.PID : " + MainView.PID);
+        }
+
+
 
 
         pidTestViewPager = ( ViewPager) view.findViewById(R.id.pidTestViewPager);

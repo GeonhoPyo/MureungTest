@@ -1,17 +1,14 @@
 package mureung.mureungtest.Tool;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.EditText;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import mureung.mureungtest.DialogManager;
 import mureung.mureungtest.MainActivity;
 
 /**
@@ -90,8 +87,8 @@ public class SearchVINTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
 
-        if(MainActivity.connectTextHandler != null){
-            MainActivity.connectTextHandler.obtainMessage(1,"연결됨 " + vin + " , 제조사 : " +strMaker + " , 모델명 : " + strModel + " , 연식 : " + strYear ).sendToTarget();
+        if(MainActivity.MainActivityHandler != null){
+            MainActivity.MainActivityHandler.obtainMessage(1,"연결됨 " + vin + " , 제조사 : " +strMaker + " , 모델명 : " + strModel + " , 연식 : " + strYear ).sendToTarget();
         }
         new MakeData().defaultData(MainActivity.mainContext,vin,strMaker,strModel,strYear);
 

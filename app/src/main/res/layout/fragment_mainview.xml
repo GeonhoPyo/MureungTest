@@ -38,28 +38,59 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/pidTestBtn"
-        android:layout_gravity="center|top"
-        android:gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="vertical"
-        >
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/allscan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/pidTestBtn"
             android:layout_gravity="center|top"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="전체 모니터링"
-            android:textColor="#ffffff"/>
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/allscan"
+                android:layout_gravity="center|top"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전체 모니터링"
+                android:textColor="#ffffff"/>
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/pidScheduleBtn"
+            android:layout_gravity="center|top"
+            android:gravity="center"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/allscan"
+                android:layout_gravity="center|top"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="스케줄링 테스트"
+                android:textColor="#ffffff"/>
+
+
+        </LinearLayout>
 
     </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="100dp"
@@ -80,6 +111,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Terminal"
+            android:textColor="#ffffff"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/diagnosisButton"
+        android:layout_gravity="center|top"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/diagnosis"
+            android:layout_gravity="center|top"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Diagnosis"
             android:textColor="#ffffff"/>
 
 

@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,16 +23,15 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.regex.Pattern;
-
-import mureung.mureungtest.Tool.ErrorLogManager;
+import mureung.mureungtest.View.PidTestView.PidTestMainView;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView connectText,dataText;
-    public static Handler connectTextHandler;
+    TextView connectText,dataText,protocolText;
+
+    public static Handler MainActivityHandler;
     public static Context mainContext;
 
     @Override
@@ -46,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         connectText.setText("연결 없음");
         dataText = findViewById(R.id.dataText);
         dataText.setText("Data");
+        protocolText = findViewById(R.id.protocolText);
+        protocolText.setText("Protocol");
 
         ConnectivityManager connectivityManager = (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if(connectivityManager !=null){
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        connectTextHandler = new Handler(new Handler.Callback() {
+        MainActivityHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
 
@@ -74,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 3 :
                             dataText.setText(String.valueOf(msg.obj));
+                        break;
+                    case 4 :
+                        mainChangeMenu(new PidTestMainView());
+                        break;
+                    case 5 :
+                        protocolText.setText(String.valueOf(msg.obj));
                         break;
                 }
 
@@ -119,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case PageStr.PidTestView :
                 mainChangeMenu(new MainView());
+
                 break;
             case PageStr.BluetoothConnect:
                 mainChangeMenu(new MainView());
