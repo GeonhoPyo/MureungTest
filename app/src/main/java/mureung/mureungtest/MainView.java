@@ -1,11 +1,13 @@
 package mureung.mureungtest;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +15,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
-import mureung.mureungtest.Tool.MakeData;
+import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.Terminal.TerminalView;
@@ -36,6 +41,9 @@ public class MainView extends Fragment implements View.OnClickListener {
     public final String ALLPID = "ALLPID";
     public final String SCHEDULEPID = "SCHEDULEPID";
     public static String PID = null;
+    private int i  = 0 ;
+    public static boolean Diagnosis_FLAG = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,6 +77,20 @@ public class MainView extends Fragment implements View.OnClickListener {
                         break;
                     case 2 :
                         bluetoothIcon.setImageDrawable(MainActivity.mainContext.getDrawable(R.drawable.obd_off));
+                        break;
+                    case 3:
+                        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        };
+                        try {
+                            new DialogManager(getContext()).positiveDialog("DTC 고장 코드", String.valueOf(msg.obj),"확인",onClickListener);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                         break;
                 }
                 return true;
@@ -143,6 +165,8 @@ public class MainView extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.diagnosisButton :
+                startDiagnosis();
+
                 break;
             /*case R.id.emailButton:
                 Intent email = new Intent(Intent.ACTION_SEND);
@@ -153,6 +177,53 @@ public class MainView extends Fragment implements View.OnClickListener {
                 startActivity(email);
                 break;*/
 
+        }
+    }
+
+    private void startDiagnosis(){
+        if(!Bluetooth_Protocol.BluetoothConnect){
+            Toast.makeText(getContext(),"OBD 연결 후 진단을 하십시오.",Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(getContext(),"진단 중입니다. 잠시만 기다려 주십시오.",Toast.LENGTH_LONG).show();
+            final String[] pushData = {
+                    "AT Z",
+                    "AT SP0",
+                    "AT H1",
+                    "AT E1",
+                    "AT L0",
+                    "AT S1",
+                    "03"
+            };
+            if(!Diagnosis_FLAG){
+                Diagnosis_FLAG = true;
+            }
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if(pushData.length > i){
+
+                        String push = pushData[i];
+                        push += "\r";
+                        new Bluetooth_Protocol().write(push.getBytes());
+                        i++;
+                    }else {
+                        cancel();
+                        i = 0;
+                    }
+
+                }
+            },0,400);
+
+
+
+            /*DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            };
+            new mureung.mureungtest.Tool.DialogManager(getContext()).positiveDialog("DTC 고장 코드","P0101","확인",onClickListener);*/
         }
     }
 

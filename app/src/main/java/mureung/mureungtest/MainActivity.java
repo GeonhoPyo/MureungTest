@@ -175,4 +175,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public class BluetoothThread extends Thread{
+        private Context context;
+        private String obdSN;
+        public BluetoothThread(Context context, String obdSN){
+
+            this.context = context;
+            this.obdSN = obdSN;
+        }
+        @Override
+        public void run() {
+            super.run();
+
+
+            /*if(obdSN!=null){
+                if(!obdSN.equals("")&&!obdSN.equals("null")){
+                    //자동연결 시도
+                    if(!FirstAutoSearchFlag){
+                        Dlog.i(" auto Connect");
+                        try {
+                            new Bluetooth_Protocol().autoSearchBt(context,obdSN);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                }
+            }*/
+        }
+    }
+
 }

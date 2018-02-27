@@ -51,7 +51,10 @@ public class MakeData {
 
         String vinSubString = null;
         try {
-            vinSubString = vin.substring(0,3);
+            if(vin != null){
+                vinSubString = vin.substring(0,3);
+            }
+
         }catch (Exception e){
             vinSubString = "NULL";
             e.printStackTrace();

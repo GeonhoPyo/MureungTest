@@ -38,6 +38,15 @@ public class DialogManager extends AlertDialog.Builder {
                 .show();
     }*/
 
+    // 확인창 다이얼로그
+    public void positiveDialog(String title, String message, String positiveMessage,DialogInterface.OnClickListener positiveBtnClickListener){
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveMessage,  positiveBtnClickListener)
+                .show();
+    }
+
+
     // 확인, 취소 버튼 다이얼로그
     public void positiveNegativeDialog(String title, String message, String positiveMessage , final DialogInterface.OnClickListener positiveBtnClickListener, String negativeMessage, DialogInterface.OnClickListener negativeBtnClickListener){
         builder.setTitle(title)

@@ -327,28 +327,43 @@ public class Bluetooth_Protocol {
                     Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
-                    if(!SETTING_FLAG){
-
+                    if(MainView.Diagnosis_FLAG){
                         if(received_text.contains(">")){
-                            if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
-                                StringBuilder strRecivedText = new StringBuilder();
-                                for(int i = 0 ; i < received_text.length() ; i ++){
-
-                                    String checkText = received_text.substring(i,i+1);
-                                    if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
-                                        strRecivedText.append(checkText);
-                                    }
+                            if(received_text.contains("03")){
+                                if(received_text.contains("SEARCHING")){
+                                    received_text = received_text.replace("SEARCHING...\r","");
                                 }
-                                received_text = String.valueOf(strRecivedText);
+                                if(received_text.contains("NO")){
+                                    if(MainView.mainViewHandler!=null){
+                                        MainView.mainViewHandler.obtainMessage(3,"NO DATA").sendToTarget();
+                                    }
+                                }else {
+                                    bypass_stream.NewStart(received_text);
+                                }
+
+                                MainView.Diagnosis_FLAG = false;
                             }
+                            received_text = "";
+                        }
+                    }else {
+                        if(!SETTING_FLAG){
+
+                            if(received_text.contains(">")){
+                                if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
+                                    StringBuilder strRecivedText = new StringBuilder();
+                                    for(int i = 0 ; i < received_text.length() ; i ++){
+
+                                        String checkText = received_text.substring(i,i+1);
+                                        if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
+                                            strRecivedText.append(checkText);
+                                        }
+                                    }
+                                    received_text = String.valueOf(strRecivedText);
+                                }
                             /*strLog = (received_text + "  \r");
                             new ErrorLogManager().saveErrorLog(strLog);*/
-                            if(ATZ_FLAG){
-                                try {
-                                    Toast.makeText(MainActivity.mainContext,"버전 : " + received_text,Toast.LENGTH_LONG).show();
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
+                                if(ATZ_FLAG){
+
 
                                 /*Log.e("test","test Protocol_FLAG : " + Protocol_FLAG + " , ProtocolCheck_FLAG : " + ProtocolCheck_FLAG);
                                 if(Protocol_FLAG){
@@ -386,129 +401,131 @@ public class Bluetooth_Protocol {
 
 
 
-                                ATZ_FLAG = false;
+                                    ATZ_FLAG = false;
 
-                                btSetting(ATSP0_SETTING);
-                                if(MainActivity.MainActivityHandler !=null){
-                                    //MainActivity.MainActivityHandler.obtainMessage(2,received_text).sendToTarget();
-                                    received_text = received_text.replace("\r","");
-                                    obdVersion = received_text;
+                                    btSetting(ATSP0_SETTING);
+                                    if(MainActivity.MainActivityHandler !=null){
+                                        //MainActivity.MainActivityHandler.obtainMessage(2,received_text).sendToTarget();
+                                        received_text = received_text.replace("\r","");
+                                        obdVersion = received_text;
+                                    }
+                                    received_text = "";
+
                                 }
-                                received_text = "";
+                                else if(ATSP0_FLAG){
+                                    ATSP0_FLAG = false;
+                                    btSetting(ATECHO_SETTING);
+                                    received_text = "";
+                                }
+                                else if(ATECHO_FLAG){
+                                    ATECHO_FLAG = false;
+                                    btSetting(ATSPACE_SETTING);
+                                    received_text = "";
+                                }else if(received_text.contains("S1")&&ATSPACE_FLAG){
+                                    ATSPACE_FLAG = false;
+                                    btSetting(ATLINEFEED_SETTING);
+                                    received_text = "";
+                                }else if(received_text.contains("L0")&&ATLINEFEED_FLAG){
+                                    btSetting(ATH1_SETTING);
+                                    received_text = "";
+                                }else if(received_text.contains("H1")&& ATH1_FLAG){
+                                    btSetting(VIN_SETIING);
+                                    received_text = "";
+                                }else if(received_text.contains("0902")&& VIN_FLAG){
+                                    if(received_text.contains("SEARCHING")){
+                                        received_text = received_text.replace("SEARCHING...\r","");
+                                    }
+                                    if(received_text.contains("\r")){
+                                        StringBuilder strValueResult = new StringBuilder();
+                                        for(int i = 0 ; i < received_text.length() ; i++){
+                                            String checkRecevedText = received_text.substring(i,i+1);
+                                            String result = null;
+                                            if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkRecevedText)){
+                                                strValueResult.append(checkRecevedText);
+                                            }
+                                        }
+                                        received_text = String.valueOf(strValueResult);
+
+                                    }
+                                    if(dataVIN != null){
+                                        dataVIN = null;
+                                    }
+                                    dataVIN = received_text;
+
+                                    btSetting(ATDPN_SETTING);
+                                    received_text = "";
+                                }else if(received_text.contains("DPN")&&ATDPN_FLAG){
+                                    protocolDataNum = null;
+                                    protocolDataNum = received_text;
+                                    btSetting(ATDP_SETTING);
+                                    received_text = "";
+
+                                }else if(received_text.contains("DP")&&ATDP_FLAG){
+                                    protocolData = null;
+                                    protocolData = received_text;
+                                    if(MainActivity.MainActivityHandler != null){
+                                        MainActivity.MainActivityHandler.obtainMessage(5,"Protocol NUM : "+protocolDataNum+"\r"+"Protocol Data : "+protocolData).sendToTarget();
+                                    }
+                                    try {
+                                        new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        bypass_stream.NewStart(received_text);
+                                    }catch (Exception e){
+
+                                    }
+                                    received_text = "";
+                                    SETTING_FLAG = true;
+                                }
+
 
                             }
-                            else if(ATSP0_FLAG){
-                                ATSP0_FLAG = false;
-                                btSetting(ATECHO_SETTING);
-                                received_text = "";
-                            }
-                            else if(ATECHO_FLAG){
-                                ATECHO_FLAG = false;
-                                btSetting(ATSPACE_SETTING);
-                                received_text = "";
-                            }else if(received_text.contains("S1")&&ATSPACE_FLAG){
-                                ATSPACE_FLAG = false;
-                                btSetting(ATLINEFEED_SETTING);
-                                received_text = "";
-                            }else if(received_text.contains("L0")&&ATLINEFEED_FLAG){
-                                btSetting(ATH1_SETTING);
-                                received_text = "";
-                            }else if(received_text.contains("H1")&& ATH1_FLAG){
-                                btSetting(VIN_SETIING);
-                                received_text = "";
-                            }else if(received_text.contains("0902")&& VIN_FLAG){
-                                if(received_text.contains("SEARCHING")){
-                                    received_text = received_text.replace("SEARCHING...\r","");
-                                }
-                                if(received_text.contains("\r")){
-                                    StringBuilder strValueResult = new StringBuilder();
-                                    for(int i = 0 ; i < received_text.length() ; i++){
-                                        String checkRecevedText = received_text.substring(i,i+1);
-                                        String result = null;
-                                        if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkRecevedText)){
-                                            strValueResult.append(checkRecevedText);
+
+
+                        }else if(SETTING_FLAG){
+
+                            if(strBuffer.contains(">"))
+                            {
+
+
+                                OBD_CONNECTSTATE = true;
+                                //Response Time
+
+                                if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
+                                    StringBuilder strRecivedText = new StringBuilder();
+                                    for(int i = 0 ; i < received_text.length() ; i ++){
+
+                                        String checkText = received_text.substring(i,i+1);
+                                        if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
+                                            strRecivedText.append(checkText);
                                         }
                                     }
-                                    received_text = String.valueOf(strValueResult);
-
+                                    received_text = String.valueOf(strRecivedText);
                                 }
-                                if(dataVIN != null){
-                                    dataVIN = null;
+                                if(PageStr.getPageStrData().equals(PageStr.Terminal)){
+                                    new TerminalView().setListData(null,received_text);
+                                    String logPullData = received_text.replace("\r","");
+                                    new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime()," PULL DATA : " + logPullData);
+                                    new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime(),"----------------------------------------------------------");
                                 }
-                                dataVIN = received_text;
 
-                                btSetting(ATDPN_SETTING);
-                                received_text = "";
-                            }else if(received_text.contains("DPN")&&ATDPN_FLAG){
-                                protocolDataNum = null;
-                                protocolDataNum = received_text;
-                                btSetting(ATDP_SETTING);
-                                received_text = "";
-
-                            }else if(received_text.contains("DP")&&ATDP_FLAG){
-                                protocolData = null;
-                                protocolData = received_text;
                                 if(MainActivity.MainActivityHandler != null){
-                                    MainActivity.MainActivityHandler.obtainMessage(5,"Protocol NUM : "+protocolDataNum+"\r"+"Protocol Data : "+protocolData).sendToTarget();
+                                    MainActivity.MainActivityHandler.obtainMessage(3,received_text).sendToTarget();
                                 }
-                                try {
-                                    new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    bypass_stream.NewStart(received_text);
-                                }catch (Exception e){
 
-                                }
-                                received_text = "";
-                                SETTING_FLAG = true;
-                            }
-                        }
-
-
-                    }else if(SETTING_FLAG){
-
-                        if(strBuffer.contains(">"))
-                        {
-
-
-                            OBD_CONNECTSTATE = true;
-                            //Response Time
-
-                            if(!received_text.matches("^[a-zA-Z0-9. >\r]*$")){
-                                StringBuilder strRecivedText = new StringBuilder();
-                                for(int i = 0 ; i < received_text.length() ; i ++){
-
-                                    String checkText = received_text.substring(i,i+1);
-                                    if(Pattern.matches("^[a-zA-Z0-9. >\r]*$",checkText)){
-                                        strRecivedText.append(checkText);
-                                    }
-                                }
-                                received_text = String.valueOf(strRecivedText);
-                            }
-                            if(PageStr.getPageStrData().equals(PageStr.Terminal)){
-                                new TerminalView().setListData(null,received_text);
-                                String logPullData = received_text.replace("\r","");
-                                new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime()," PULL DATA : " + logPullData);
-                                new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime(),"----------------------------------------------------------");
-                            }
-
-                            if(MainActivity.MainActivityHandler != null){
-                                MainActivity.MainActivityHandler.obtainMessage(3,received_text).sendToTarget();
-                            }
-
-                            if(received_text.contains("NO DATA")){
-                                //Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
-                                NoDataCount +=1;
-                                if(NoDataCount > 56){
-                                    //연결재시도
-                                    NoDataCount = 0;
-                                    NoData_FLAG= true;
-                                    String pushSP0 = "AT SP0";
-                                    pushSP0 += "\r";
-                                    //Log.e("ConnectedThread","pushSP0 : " + pushSP0);
-                                    write(pushSP0.getBytes());
+                                if(received_text.contains("NO DATA")){
+                                    //Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
+                                    NoDataCount +=1;
+                                    if(NoDataCount > 56){
+                                        //연결재시도
+                                        NoDataCount = 0;
+                                        NoData_FLAG= true;
+                                        String pushSP0 = "AT SP0";
+                                        pushSP0 += "\r";
+                                        //Log.e("ConnectedThread","pushSP0 : " + pushSP0);
+                                        write(pushSP0.getBytes());
                                     /*try {
                                         //new Bluetooth_Protocol().cancel();
                                         if(!ReconnectFlag){
@@ -535,22 +552,22 @@ public class Bluetooth_Protocol {
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }*/
+                                    }
+                                }else {
+                                    NoDataCount = 0;
                                 }
-                            }else {
-                                NoDataCount = 0;
-                            }
 
-                            if(NoData_FLAG){
-                                //여기서 한번은 sp0 으로 search 하고
-                                //그다음 더미데이터 보내고 데이터 잘나오는지 확인하고
-                                //그다음 저장되어있던 AT Protocol 을 다시 설정하고 시작
-                                if(received_text.contains("SP0")){
-                                    String pushData = "010c";
-                                    pushData += "\r";
-                                    //Log.e("ConnectedThread","pushData : " + pushData);
-                                    write(pushData.getBytes());
-                                    NoData_FLAG = false;
-                                }/*else if(received_text.contains("010c")){
+                                if(NoData_FLAG){
+                                    //여기서 한번은 sp0 으로 search 하고
+                                    //그다음 더미데이터 보내고 데이터 잘나오는지 확인하고
+                                    //그다음 저장되어있던 AT Protocol 을 다시 설정하고 시작
+                                    if(received_text.contains("SP0")){
+                                        String pushData = "010c";
+                                        pushData += "\r";
+                                        //Log.e("ConnectedThread","pushData : " + pushData);
+                                        write(pushData.getBytes());
+                                        NoData_FLAG = false;
+                                    }/*else if(received_text.contains("010c")){
 
                                     String pushProtocol = "AT SP"+protocol[saveProtocolCount];
                                     pushProtocol += "\r";
@@ -560,34 +577,36 @@ public class Bluetooth_Protocol {
                                 }*/
 
 
-                            }else {
-                                try {
-                                    bypass_stream.NewStart(received_text);
-                                }catch (Exception e){
+                                }else {
+                                    try {
+                                        bypass_stream.NewStart(received_text);
+                                    }catch (Exception e){
 
+                                    }
+
+                                    if(PidTestFlag){
+                                        pushPID();
+                                    }
                                 }
 
-                                if(PidTestFlag){
-                                    pushPID();
+
+
+
+                                //Data TextView 로 보냄
+                                if(dataHandler != null) {
+                                    dataHandler.obtainMessage(MESSAGE_READ, bytes, 0, received_text)
+                                            .sendToTarget();
                                 }
-                            }
-
-
-
-
-                            //Data TextView 로 보냄
-                            if(dataHandler != null) {
-                                dataHandler.obtainMessage(MESSAGE_READ, bytes, 0, received_text)
-                                        .sendToTarget();
-                            }
                             /*if(PageStr.getPageStrData().equals(PageStr.Terminal)){
                                 received_text.replace("\r","");
                                 new ErrorLogManager().saveErrorLog("TerminalRec"+new Time_DataBridge().getTerminalTime()," PULL DATA : " + received_text);
                             }*/
-                            received_text = "";
+                                received_text = "";
 
+                            }
                         }
                     }
+
                 } catch (IOException e) {
                     connectionLost(btAddress);
                     e.printStackTrace();

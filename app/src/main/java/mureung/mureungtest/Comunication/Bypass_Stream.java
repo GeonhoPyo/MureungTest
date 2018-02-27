@@ -1,10 +1,12 @@
 package mureung.mureungtest.Comunication;
 
+import android.content.DialogInterface;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import mureung.mureungtest.MainActivity;
+import mureung.mureungtest.MainView;
 import mureung.mureungtest.Tool.SearchVINTask;
 
 /**
@@ -97,21 +99,26 @@ public class Bypass_Stream {
             }
 
             else if(RequestPID.contains("03")){
+                Log.e("test","test 1111");
                 NonPID = false;
                 Init = false;
                 VIN = false;
                 data_find_flag = false;
                 Diagnosis = true;
                 ArrayList<String> dtcCode = new ArrayList<String>();
+
                 for(int i = 0 ; i < ECU_ID.length ; i++){
                     ArrayList<String> parseArray = new ArrayList<String>();
                     String result = collect_data(DataField,ECU_ID[i]);
+
                     if(result != null){
                         if(result.length() != 0){
                             parseArray = new Parse().parseDiagnosis(result);
                             if(parseArray!=null){
                                 dtcCode.addAll(parseArray);
                             }
+
+
                         }
 
                     }
@@ -123,7 +130,9 @@ public class Bypass_Stream {
                 //dtcCode = 현재 DTC 코드 리스트
                 //strDtcCode = 직전 DTC 코드 리스트
                 //두개를 다 보내서 비교해서 event on/off
-
+                if(MainView.mainViewHandler!=null){
+                    MainView.mainViewHandler.obtainMessage(3,dtcCode).sendToTarget();
+                }
                 strDtcCode.clear();
                 strDtcCode.addAll(dtcCode);
             }
