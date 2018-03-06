@@ -45,7 +45,7 @@ public class MainView extends Fragment implements View.OnClickListener {
     private int i  = 0 ;
     public static boolean Diagnosis_FLAG = false;
     public static String diagnosisVin = null;
-    private static boolean Voltage_FLAG = false;
+    public static boolean Voltage_FLAG = false;
 
 
     @Nullable
