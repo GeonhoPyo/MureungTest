@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -29,7 +30,7 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView connectText,dataText,protocolText;
+    TextView connectText,dataText,protocolText,protocolNumText;
 
     public static Handler MainActivityHandler;
     public static Context mainContext;
@@ -45,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
         dataText = findViewById(R.id.dataText);
         dataText.setText("Data");
         protocolText = findViewById(R.id.protocolText);
-        protocolText.setText("Protocol");
+        protocolText.setText("Protocol : ");
+        protocolNumText = findViewById(R.id.protocolNumText);
+        protocolNumText.setText("Protocol Num : ");
+
 
         ConnectivityManager connectivityManager = (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if(connectivityManager !=null){
@@ -80,6 +84,21 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case 5 :
                         protocolText.setText(String.valueOf(msg.obj));
+                        break;
+
+                    case 6 :
+                        protocolNumText.setText(String.valueOf(msg.obj));
+                        break;
+                    case 7 :
+                        final Toast toast = Toast.makeText(MainActivity.mainContext,String.valueOf(msg.obj),Toast.LENGTH_SHORT);
+                        toast.show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                toast.cancel();
+                            }
+                        },700);
+
                         break;
                 }
 
@@ -132,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 mainChangeMenu(new MainView());
                 break;
             case PageStr.Terminal:
+                mainChangeMenu(new MainView());
+                break;
+            case PageStr.Voltage :
                 mainChangeMenu(new MainView());
                 break;
         }

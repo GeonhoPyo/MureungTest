@@ -7,7 +7,9 @@ import java.util.ArrayList;
 
 import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.MainView;
+import mureung.mureungtest.Tool.MakeData;
 import mureung.mureungtest.Tool.SearchVINTask;
+import mureung.mureungtest.Tool.Time_DataBridge;
 
 /**
  * Created by user on 2018-01-29.
@@ -88,7 +90,9 @@ public class Bypass_Stream {
                 Result = new Parse().parseVIN(collect_data(DataField, ECU_ID[0]));
 
                 Log.e("Bypass_Stream","0902 Result : " + Result);
-
+                if(MainView.diagnosisVin == null){
+                    MainView.diagnosisVin = Result;
+                }
                 if(MainActivity.MainActivityHandler != null){
                     MainActivity.MainActivityHandler.obtainMessage(1,"연결됨 " + Result).sendToTarget();
                 }
@@ -99,7 +103,6 @@ public class Bypass_Stream {
             }
 
             else if(RequestPID.contains("03")){
-                Log.e("test","test 1111");
                 NonPID = false;
                 Init = false;
                 VIN = false;
@@ -132,6 +135,9 @@ public class Bypass_Stream {
                 //두개를 다 보내서 비교해서 event on/off
                 if(MainView.mainViewHandler!=null){
                     MainView.mainViewHandler.obtainMessage(3,dtcCode).sendToTarget();
+                    String time = new Time_DataBridge().getRealTime();
+                    new MakeData().diagnosisData(time,MainView.diagnosisVin,dtcCode.toString());
+
                 }
                 strDtcCode.clear();
                 strDtcCode.addAll(dtcCode);

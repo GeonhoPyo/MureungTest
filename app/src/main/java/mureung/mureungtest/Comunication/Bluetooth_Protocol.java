@@ -327,6 +327,7 @@ public class Bluetooth_Protocol {
                     Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
+
                     if(MainView.Diagnosis_FLAG){
                         if(received_text.contains(">")){
                             if(received_text.contains("03")){
@@ -341,6 +342,16 @@ public class Bluetooth_Protocol {
                                     bypass_stream.NewStart(received_text);
                                 }
 
+                                MainView.Diagnosis_FLAG = false;
+                            }else if(received_text.contains("0902")){
+                                if(received_text.contains("SEARCHING")){
+                                    received_text = received_text.replace("SEARCHING...\r","");
+                                }
+                                if(!received_text.contains("NO")){
+                                    bypass_stream.NewStart(received_text);
+                                }else {
+                                    MainView.diagnosisVin = "NO DATA";
+                                }
                                 MainView.Diagnosis_FLAG = false;
                             }
                             received_text = "";
@@ -360,6 +371,7 @@ public class Bluetooth_Protocol {
                                     }
                                     received_text = String.valueOf(strRecivedText);
                                 }
+
                             /*strLog = (received_text + "  \r");
                             new ErrorLogManager().saveErrorLog(strLog);*/
                                 if(ATZ_FLAG){
@@ -451,6 +463,11 @@ public class Bluetooth_Protocol {
                                         dataVIN = null;
                                     }
                                     dataVIN = received_text;
+                                    try {
+                                        bypass_stream.NewStart(received_text);
+                                    }catch (Exception e){
+
+                                    }
 
                                     btSetting(ATDPN_SETTING);
                                     received_text = "";
@@ -464,22 +481,27 @@ public class Bluetooth_Protocol {
                                     protocolData = null;
                                     protocolData = received_text;
                                     if(MainActivity.MainActivityHandler != null){
-                                        MainActivity.MainActivityHandler.obtainMessage(5,"Protocol NUM : "+protocolDataNum+"\r"+"Protocol Data : "+protocolData).sendToTarget();
+                                        MainActivity.MainActivityHandler.obtainMessage(5,"Protocol Data : "+protocolData).sendToTarget();
+                                        MainActivity.MainActivityHandler.obtainMessage(6,"Protocol Num : " + protocolDataNum).sendToTarget();
                                     }
                                     try {
                                         new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
                                     }catch (Exception e){
                                         e.printStackTrace();
                                     }
-                                    try {
-                                        bypass_stream.NewStart(received_text);
-                                    }catch (Exception e){
 
-                                    }
                                     received_text = "";
                                     SETTING_FLAG = true;
                                 }
 
+                                if(received_text.contains(">")){
+                                    if(received_text.contains("AT RV")){
+                                        new MakeData().voltageData(new Time_DataBridge().getRealTime(),dataVIN,received_text);
+                                        received_text = "";
+                                    }else {
+                                        received_text = "";
+                                    }
+                                }
 
                             }
 
@@ -488,7 +510,6 @@ public class Bluetooth_Protocol {
 
                             if(strBuffer.contains(">"))
                             {
-
 
                                 OBD_CONNECTSTATE = true;
                                 //Response Time
@@ -626,6 +647,7 @@ public class Bluetooth_Protocol {
         }
 
         public void pushSettingATCommand(){
+            SETTING_FLAG = false;
             if(!ATZ_FLAG){
                 btSetting(ATZ_SETTING);
                 ATZ_FLAG = true;
@@ -634,11 +656,14 @@ public class Bluetooth_Protocol {
 
         public void pushPID(){
             //여기서 유저 정보 없으면 못하게 막아라
-            if(MainView.PID.equals(new MainView().ALLPID)){
-                write(new StandardPid().startAllPid().getBytes());
-            }else if(MainView.PID.equals(new MainView().SCHEDULEPID)){
-                write(new StandardPid().startSchedulePid().getBytes());
+            if(MainView.PID != null){
+                if(MainView.PID.equals(new MainView().ALLPID)){
+                    write(new StandardPid().startAllPid().getBytes());
+                }else if(MainView.PID.equals(new MainView().SCHEDULEPID)){
+                    write(new StandardPid().startSchedulePid().getBytes());
+                }
             }
+
 
 
         }
@@ -802,6 +827,7 @@ public class Bluetooth_Protocol {
     // 값을 쓰는 부분(보내는 부분)
     public void write(byte[] out) {
         ConnectedThread r;
+        Log.e("test","write out : " + new String(out,0,out.length) );
         synchronized (this) {
             if (mState != STATE_CONNECTED){
                 return;

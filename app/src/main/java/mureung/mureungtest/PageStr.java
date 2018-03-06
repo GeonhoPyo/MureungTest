@@ -11,6 +11,7 @@ public class PageStr {
     public static final String PidTestView = "PidTestMainView";
     public static final String BluetoothConnect = "BluetoothConnect";
     public static final String Terminal = "Terminal";
+    public static final String Voltage = "Voltage";
     private static String pageStrData ;
 
     public static String getPageStrData() {

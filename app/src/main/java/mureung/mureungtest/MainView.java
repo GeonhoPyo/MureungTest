@@ -23,6 +23,7 @@ import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.Terminal.TerminalView;
+import mureung.mureungtest.View.VoltageFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
@@ -32,17 +33,20 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
 public class MainView extends Fragment implements View.OnClickListener {
 
-    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton;
+    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton;
     LinearLayout bluetoothConnect;
     ImageView bluetoothIcon;
     static Intent outIntent;
     public static Handler mainViewHandler;
     public static boolean bluetoothState;
-    public final String ALLPID = "ALLPID";
-    public final String SCHEDULEPID = "SCHEDULEPID";
+    public final String ALLPID = "ALL_PID";
+    public final String SCHEDULEPID = "SCHEDULE_PID";
     public static String PID = null;
     private int i  = 0 ;
     public static boolean Diagnosis_FLAG = false;
+    public static String diagnosisVin = null;
+    private static boolean Voltage_FLAG = false;
+
 
     @Nullable
     @Override
@@ -60,6 +64,8 @@ public class MainView extends Fragment implements View.OnClickListener {
         pidScheduleBtn.setOnClickListener(this);
         diagnosisButton = (LinearLayout)view.findViewById(R.id.diagnosisButton);
         diagnosisButton.setOnClickListener(this);
+        voltageButton = (LinearLayout)view.findViewById(R.id.voltageButton);
+        voltageButton.setOnClickListener(this);
         bluetoothIcon = (ImageView) view.findViewById(R.id.bluetoothIcon);
         /*emailButton = ( LinearLayout)view.findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this);*/
@@ -168,6 +174,10 @@ public class MainView extends Fragment implements View.OnClickListener {
                 startDiagnosis();
 
                 break;
+
+            case R.id.voltageButton :
+                startVoltage();
+                break;
             /*case R.id.emailButton:
                 Intent email = new Intent(Intent.ACTION_SEND);
                 email.setType("plain/text");
@@ -176,6 +186,69 @@ public class MainView extends Fragment implements View.OnClickListener {
                 email.putExtra(Intent.EXTRA_TEXT,"test");
                 startActivity(email);
                 break;*/
+
+        }
+    }
+
+    private void startVoltage(){
+
+        if(!Bluetooth_Protocol.BluetoothConnect){
+            Toast.makeText(getContext(),"OBD 연결 후 전압 테스트를 하십시오.",Toast.LENGTH_LONG).show();
+        }else {
+
+
+            if(!Voltage_FLAG){
+                Toast.makeText(getContext(),"초기 설정 중 입니다 . 잠시만 기다려주십시오 .",Toast.LENGTH_LONG).show();
+                final String[] pushData = {
+                        "AT Z",
+                        "AT SP0",
+                        "AT H1",
+                        "AT E1",
+                        "AT L0",
+                        "AT S1"
+                };
+                Voltage_FLAG = true;
+                final Timer voltageTimer = new Timer();
+                Timer settingTimer = new Timer();
+                settingTimer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(pushData.length > i){
+                            String push = pushData[i];
+                            push += "\r";
+                            new Bluetooth_Protocol().write(push.getBytes());
+                            i++;
+                        }else {
+                            ((MainActivity)getActivity()).mainChangeMenu(new VoltageFragment());
+                            cancel();
+                            i = 0;
+                            voltageTimer.scheduleAtFixedRate(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    if(!Voltage_FLAG){
+                                        cancel();
+                                    }
+                                    String voltagePush ="AT RV";
+                                    voltagePush += "\r";
+                                    new Bluetooth_Protocol().write(voltagePush.getBytes());
+                                }
+
+
+                            },500,1000);
+                        }
+
+                    }
+                },0,500);
+            }else {
+
+                try {
+                    Voltage_FLAG = false;
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
 
         }
     }
@@ -192,6 +265,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                     "AT E1",
                     "AT L0",
                     "AT S1",
+                    "0902",
                     "03"
             };
             if(!Diagnosis_FLAG){
@@ -213,7 +287,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                     }
 
                 }
-            },0,400);
+            },0,1000);
 
 
 

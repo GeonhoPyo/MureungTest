@@ -2,12 +2,16 @@ package mureung.mureungtest.Tool;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
+
+import java.util.regex.Pattern;
 
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.DataBase.PIDTEST;
 import mureung.mureungtest.DataBase.PIDTEST_DBHelper;
 import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.MainView;
+import mureung.mureungtest.View.VoltageFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.obdVersion;
 import static mureung.mureungtest.Comunication.Bypass_Stream.dataVIN;
@@ -19,6 +23,7 @@ import static mureung.mureungtest.Comunication.Bypass_Stream.dataVIN;
 public class MakeData {
     public static boolean FinishLog_FLAG ;
     public static String fileName ;
+    public static String voltageFileName ;
 
     public void defaultData(Context context, String vin, String carMaker, String carModel , String carYear){
 
@@ -67,7 +72,7 @@ public class MakeData {
         if(MainView.PID != null){
             new ErrorLogManager().saveErrorLog(fileName,"//-------------"+MainView.PID+"-----------");
         }
-        new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");
+        /*new ErrorLogManager().saveErrorLog(fileName,"//----------------------------------------");
         new ErrorLogManager().saveErrorLog(fileName,"통신 프로토콜 표 ----");
         new ErrorLogManager().saveErrorLog(fileName,"0. Auto");
         new ErrorLogManager().saveErrorLog(fileName,"1. SAE J1850 PWM (41.6 kbaud)");
@@ -81,7 +86,7 @@ public class MakeData {
         new ErrorLogManager().saveErrorLog(fileName,"9. ISO 15765-4 CAN (29 bit ID , 250 kbaud)");
         new ErrorLogManager().saveErrorLog(fileName,"A. SAE J1939 CAN (29 bit ID , 250 kbaud)");
         new ErrorLogManager().saveErrorLog(fileName,"B. USER1 CAN (11 bit ID , 125 kbaud)");
-        new ErrorLogManager().saveErrorLog(fileName,"C. USER2 CAN (11 bit ID , 50 kbaud)");
+        new ErrorLogManager().saveErrorLog(fileName,"C. USER2 CAN (11 bit ID , 50 kbaud)");*/
 
         new ErrorLogManager().saveErrorLog(fileName,"------------------");
         if(Bluetooth_Protocol.protocolDataNum!=null){
@@ -143,6 +148,71 @@ public class MakeData {
         if(MainView.PID !=null){
             if(MainActivity.MainActivityHandler !=null){
                 MainActivity.MainActivityHandler.obtainMessage(4,null).sendToTarget();
+            }
+        }
+
+
+    }
+
+    //diagnosisFileName : VIN + 날짜 + 시간
+    public void diagnosisData(String time ,String vin, String diagnosisData){
+        if(vin == null){
+            vin = "NULL";
+        }
+        String diagnosisFileName = time + "_" + vin;
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"//----------------------------------------");
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"------------------Diagnosis---------------");
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"------------------------------------------");
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"시간 : " + time);
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"------------------------------------------");
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"VIN : " + vin);
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"------------------------------------------");
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"DTC : " + diagnosisData);
+        new ErrorLogManager().saveErrorLog(diagnosisFileName,"----------------------------------------//");
+    }
+
+    public void voltageData(String time, String vin, String voltageData){
+        if(!voltageData.matches("^[0-9.]*$")){
+            StringBuilder strRecivedText = new StringBuilder();
+            for(int i = 0 ; i < voltageData.length() ; i ++){
+
+                String checkText = voltageData.substring(i,i+1);
+                if(Pattern.matches("^[0-9. >\r]*$",checkText)){
+                    strRecivedText.append(checkText);
+                }
+            }
+            voltageData = String.valueOf(strRecivedText);
+        }
+        String data = voltageData.replace("AT","");
+        data = data.replace("RV","");
+        data = data.replace("V","");
+        data = data.replace(">","");
+        if(vin == null){
+            vin = "NULL";
+        }
+        String FileName = "Voltage_"+time+"_"+vin;
+        if(voltageFileName == null){
+            voltageFileName = FileName;
+            new ErrorLogManager().saveErrorLog(voltageFileName,"//----------------------------------------");
+            new ErrorLogManager().saveErrorLog(voltageFileName,"----------------Voltage Test--------------");
+            new ErrorLogManager().saveErrorLog(voltageFileName,"------------------------------------------");
+            new ErrorLogManager().saveErrorLog(voltageFileName,"시간 : " + time);
+            new ErrorLogManager().saveErrorLog(voltageFileName,"------------------------------------------");
+            new ErrorLogManager().saveErrorLog(voltageFileName,"VIN : " + vin);
+            new ErrorLogManager().saveErrorLog(voltageFileName,"------------------------------------------");
+            new ErrorLogManager().saveErrorLog(voltageFileName,"전압 : " + data);
+        }else {
+            new ErrorLogManager().saveErrorLog(voltageFileName,"전압 : " + data);
+            if(MainActivity.MainActivityHandler != null){
+                MainActivity.MainActivityHandler.obtainMessage(7,"전압 : " + data).sendToTarget();
+            }
+        }
+
+        if(data != null){
+            Log.e("test","test 1111");
+            if(VoltageFragment.voltageHandler != null){
+                Log.e("test","test 2222");
+                VoltageFragment.voltageHandler.obtainMessage(1,data).sendToTarget();
             }
         }
 
