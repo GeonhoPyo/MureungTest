@@ -430,7 +430,10 @@ public class Bluetooth_Protocol {
                                 }
                                 try {
                                     new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
-                                    new MakeData().defaultData(MainActivity.mainContext,Parse.strVIN,strMaker,strModel,strYear);
+                                    if(MainView.Voltage_FLAG||MainView.Diagnosis_FLAG){
+                                        new MakeData().defaultData(MainActivity.mainContext,Parse.strVIN,strMaker,strModel,strYear);
+                                    }
+
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
