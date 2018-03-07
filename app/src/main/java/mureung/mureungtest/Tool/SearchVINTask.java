@@ -27,9 +27,9 @@ public class SearchVINTask extends AsyncTask<Void, Void, Void> {
     private static String vin;
 
     // 크롤링 된 데이터를 저장할 변수
-    private String strMaker;
-    private String strYear;
-    private String strModel;
+    public static String strMaker;
+    public static String strYear;
+    public static String strModel;
 
     // 프로그레스 다이얼로그 변수
     private ProgressDialog progressDialog;
@@ -90,7 +90,7 @@ public class SearchVINTask extends AsyncTask<Void, Void, Void> {
         if(MainActivity.MainActivityHandler != null){
             MainActivity.MainActivityHandler.obtainMessage(1,"연결됨 " + vin + " , 제조사 : " +strMaker + " , 모델명 : " + strModel + " , 연식 : " + strYear ).sendToTarget();
         }
-        new MakeData().defaultData(MainActivity.mainContext,vin,strMaker,strModel,strYear);
+
 
 
     }

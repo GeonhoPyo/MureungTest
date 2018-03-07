@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
+import mureung.mureungtest.View.VoltageFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
 
@@ -99,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         },700);
 
+                        break;
+                    case 8 :
+                        mainChangeMenu(new VoltageFragment());
                         break;
                 }
 

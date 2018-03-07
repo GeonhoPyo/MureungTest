@@ -166,7 +166,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                 if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
                     ((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
                 }else {
-                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시후 시도 해보십시오.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시만 기다리세요.",Toast.LENGTH_LONG).show();
                 }
                 break;
 
@@ -205,10 +205,14 @@ public class MainView extends Fragment implements View.OnClickListener {
                         "AT H1",
                         "AT E1",
                         "AT L0",
-                        "AT S1"
+                        "AT S1",
+                        "0902"
                 };
                 Voltage_FLAG = true;
-                final Timer voltageTimer = new Timer();
+
+                new Bluetooth_Protocol().pushATSetting();
+
+                /*final Timer voltageTimer = new Timer();
                 Timer settingTimer = new Timer();
                 settingTimer.scheduleAtFixedRate(new TimerTask() {
                     @Override
@@ -227,10 +231,12 @@ public class MainView extends Fragment implements View.OnClickListener {
                                 public void run() {
                                     if(!Voltage_FLAG){
                                         cancel();
+                                    }else {
+                                        String voltagePush ="AT RV";
+                                        voltagePush += "\r";
+                                        new Bluetooth_Protocol().write(voltagePush.getBytes());
                                     }
-                                    String voltagePush ="AT RV";
-                                    voltagePush += "\r";
-                                    new Bluetooth_Protocol().write(voltagePush.getBytes());
+
                                 }
 
 
@@ -238,7 +244,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                         }
 
                     }
-                },0,500);
+                },0,1000);*/
             }else {
 
                 try {
@@ -258,7 +264,7 @@ public class MainView extends Fragment implements View.OnClickListener {
             Toast.makeText(getContext(),"OBD 연결 후 진단을 하십시오.",Toast.LENGTH_LONG).show();
         }else {
             Toast.makeText(getContext(),"진단 중입니다. 잠시만 기다려 주십시오.",Toast.LENGTH_LONG).show();
-            final String[] pushData = {
+            /*final String[] pushData = {
                     "AT Z",
                     "AT SP0",
                     "AT H1",
@@ -267,11 +273,12 @@ public class MainView extends Fragment implements View.OnClickListener {
                     "AT S1",
                     "0902",
                     "03"
-            };
+            };*/
             if(!Diagnosis_FLAG){
                 Diagnosis_FLAG = true;
+                new Bluetooth_Protocol().pushATSetting();
             }
-            Timer timer = new Timer();
+            /*Timer timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
@@ -287,7 +294,7 @@ public class MainView extends Fragment implements View.OnClickListener {
                     }
 
                 }
-            },0,1000);
+            },0,1000);*/
 
 
 

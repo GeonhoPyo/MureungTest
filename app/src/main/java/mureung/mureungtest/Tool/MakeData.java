@@ -209,9 +209,7 @@ public class MakeData {
         }
 
         if(data != null){
-            Log.e("test","test 1111");
             if(VoltageFragment.voltageHandler != null){
-                Log.e("test","test 2222");
                 VoltageFragment.voltageHandler.obtainMessage(1,data).sendToTarget();
             }
         }

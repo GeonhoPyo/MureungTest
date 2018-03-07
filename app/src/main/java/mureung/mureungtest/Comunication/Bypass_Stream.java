@@ -96,6 +96,7 @@ public class Bypass_Stream {
                 if(MainActivity.MainActivityHandler != null){
                     MainActivity.MainActivityHandler.obtainMessage(1,"연결됨 " + Result).sendToTarget();
                 }
+                Bluetooth_Protocol.pushVIN = Result;
                 /*new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();*/
 
                 //dataVIN+= strVIN;
