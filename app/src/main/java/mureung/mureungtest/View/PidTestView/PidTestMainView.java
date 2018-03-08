@@ -45,6 +45,8 @@ public class PidTestMainView extends Fragment {
         pidTestViewPager.setCurrentItem(0);
         pidTestViewPager.setOffscreenPageLimit(4);
 
+        MainView.PidTestStart_FLAG = false;
+
 
 
         return view;

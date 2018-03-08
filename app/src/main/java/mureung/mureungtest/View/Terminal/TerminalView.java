@@ -18,6 +18,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.MainView;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;
 import mureung.mureungtest.Tool.ErrorLogManager;
@@ -75,7 +76,7 @@ public class TerminalView extends Fragment implements View.OnClickListener {
             }
         });
 
-
+        MainView.TerminalStart_FLAG = false;
         new Bluetooth_Protocol().pushATSetting();
 
         return view;

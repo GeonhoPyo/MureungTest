@@ -46,6 +46,10 @@ public class MainView extends Fragment implements View.OnClickListener {
     public static boolean Diagnosis_FLAG = false;
     public static String diagnosisVin = null;
     public static boolean Voltage_FLAG = false;
+    public static boolean PidTestStart_FLAG = false;
+    public static boolean TerminalStart_FLAG = false;
+    public static boolean DiagnosisStart_FLAG = false;
+    public static boolean VoltageStart_FLAG = false;
 
 
     @Nullable
@@ -140,43 +144,61 @@ public class MainView extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.pidTestBtn:
-                Bluetooth_Protocol.SETTING_FLAG = false;
-                PID = ALLPID;
-                new Bluetooth_Protocol().pushATSetting();
+                if(!PidTestStart_FLAG){
+                    PidTestStart_FLAG = true;
+                    Bluetooth_Protocol.SETTING_FLAG = false;
+                    PID = ALLPID;
+                    new Bluetooth_Protocol().pushATSetting();
 
-                if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
-                    //((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
-                }else {
-                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 기다려 주십시오. ",Toast.LENGTH_LONG).show();
+                    if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
+                        //((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
+                    }else {
+                        Toast.makeText(getContext(),"데이터를 쓰는중입니다. 기다려 주십시오. ",Toast.LENGTH_LONG).show();
+                    }
                 }
-
                 break;
             case R.id.bluetoothConnect:
                 ((MainActivity)getActivity()).mainChangeMenu(new BluetoothConnect());
                 break;
             case R.id.terminalButton:
-                ((MainActivity)getActivity()).mainChangeMenu(new TerminalView());
+                if(!TerminalStart_FLAG){
+                    TerminalStart_FLAG = true;
+                    ((MainActivity)getActivity()).mainChangeMenu(new TerminalView());
+                }
+
                 break;
 
             case R.id.pidScheduleBtn :
-                Bluetooth_Protocol.SETTING_FLAG = false;
-                PID = SCHEDULEPID;
-                new Bluetooth_Protocol().pushATSetting();
+                if(!PidTestStart_FLAG){
+                    PidTestStart_FLAG = true;
+                    Bluetooth_Protocol.SETTING_FLAG = false;
+                    PID = SCHEDULEPID;
+                    new Bluetooth_Protocol().pushATSetting();
 
-                if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
-                    ((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
-                }else {
-                    Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시만 기다리세요.",Toast.LENGTH_LONG).show();
+                    if(MakeData.FinishLog_FLAG|| !Bluetooth_Protocol.BluetoothConnect){
+                        //((MainActivity)getActivity()).mainChangeMenu(new PidTestMainView());
+                    }else {
+                        Toast.makeText(getContext(),"데이터를 쓰는중입니다. 잠시만 기다리세요.",Toast.LENGTH_LONG).show();
+                    }
                 }
+
                 break;
 
             case R.id.diagnosisButton :
-                startDiagnosis();
+                if(!DiagnosisStart_FLAG){
+                    DiagnosisStart_FLAG = true;
+                    startDiagnosis();
+                }
+
 
                 break;
 
             case R.id.voltageButton :
-                startVoltage();
+                if(!VoltageStart_FLAG){
+                    VoltageStart_FLAG = true;
+                    startVoltage();
+                }
+
                 break;
             /*case R.id.emailButton:
                 Intent email = new Intent(Intent.ACTION_SEND);

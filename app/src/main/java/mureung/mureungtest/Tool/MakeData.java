@@ -144,7 +144,6 @@ public class MakeData {
 
         FinishLog_FLAG = true;
 
-
         if(MainView.PID !=null){
             if(MainActivity.MainActivityHandler !=null){
                 MainActivity.MainActivityHandler.obtainMessage(4,null).sendToTarget();

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.MainView;
+import mureung.mureungtest.PageStr;
 import mureung.mureungtest.Tool.MakeData;
 import mureung.mureungtest.Tool.SearchVINTask;
 import mureung.mureungtest.Tool.Time_DataBridge;
@@ -130,16 +131,15 @@ public class Bypass_Stream {
 
                 }
 
-                //여기서 가져온 DTC Code 전체를 Event_DataBridge 에 넣으면 된다 계속
-                //dtcCode = 현재 DTC 코드 리스트
-                //strDtcCode = 직전 DTC 코드 리스트
-                //두개를 다 보내서 비교해서 event on/off
-                if(MainView.mainViewHandler!=null){
-                    MainView.mainViewHandler.obtainMessage(3,dtcCode).sendToTarget();
-                    String time = new Time_DataBridge().getRealTime();
-                    new MakeData().diagnosisData(time,MainView.diagnosisVin,dtcCode.toString());
+                if(!PageStr.getPageStrData().contains(PageStr.PidTestView)){
+                    if(MainView.mainViewHandler!=null){
+                        MainView.mainViewHandler.obtainMessage(3,dtcCode).sendToTarget();
+                        String time = new Time_DataBridge().getRealTime();
+                        new MakeData().diagnosisData(time,MainView.diagnosisVin,dtcCode.toString());
 
+                    }
                 }
+
                 strDtcCode.clear();
                 strDtcCode.addAll(dtcCode);
             }

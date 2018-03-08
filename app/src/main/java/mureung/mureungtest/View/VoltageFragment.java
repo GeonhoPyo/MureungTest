@@ -44,6 +44,8 @@ public class VoltageFragment extends Fragment {
         PageStr.setPageStrData(PageStr.Voltage);
         lineChart = (LineChart)view.findViewById(R.id.chart);
 
+        MainView.VoltageStart_FLAG = false;
+
         Timer voltageTimer = new Timer();
         voltageTimer.scheduleAtFixedRate(new TimerTask() {
             @Override

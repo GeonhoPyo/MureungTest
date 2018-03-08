@@ -430,12 +430,17 @@ public class Bluetooth_Protocol {
                                 }
                                 try {
                                     new SearchVINTask(MainActivity.mainContext, null, null, null, Parse.strVIN).execute();
-                                    if(MainView.Voltage_FLAG||MainView.Diagnosis_FLAG){
-                                        new MakeData().defaultData(MainActivity.mainContext,Parse.strVIN,strMaker,strModel,strYear);
-                                    }
 
                                 }catch (Exception e){
                                     e.printStackTrace();
+                                }
+                                Log.e("test","test MainView.Voltage_FLAG : " + MainView.Voltage_FLAG + " , MainView.Diagnosis_FLAG : " + MainView.Diagnosis_FLAG +
+                                        " , MainView.PIDTestStart_FLAG : " + MainView.PidTestStart_FLAG);
+                                if(!MainView.Voltage_FLAG&&!MainView.Diagnosis_FLAG){
+                                    if(MainView.PidTestStart_FLAG){
+                                        new MakeData().defaultData(MainActivity.mainContext,Parse.strVIN,strMaker,strModel,strYear);
+                                    }
+
                                 }
 
 
@@ -447,6 +452,7 @@ public class Bluetooth_Protocol {
                                     String push = "03";
                                     push += "\r";
                                     new Bluetooth_Protocol().write(push.getBytes());
+                                    MainView.DiagnosisStart_FLAG = false;
                                 }
                                 received_text = "";
                                 SETTING_FLAG = true;
@@ -627,9 +633,9 @@ public class Bluetooth_Protocol {
         public void pushPID(){
             //여기서 유저 정보 없으면 못하게 막아라
             if(MainView.PID != null){
-                if(MainView.PID.equals(new MainView().ALLPID)){
+                if(MainView.PID.contains(new MainView().ALLPID)){
                     write(new StandardPid().startAllPid().getBytes());
-                }else if(MainView.PID.equals(new MainView().SCHEDULEPID)){
+                }else if(MainView.PID.contains(new MainView().SCHEDULEPID)){
                     write(new StandardPid().startSchedulePid().getBytes());
                 }
             }
@@ -692,11 +698,12 @@ public class Bluetooth_Protocol {
         switch (PageStr.getPageStrData()){
             case PageStr.PidTestView :
                 if(PID.equals(new MainView().ALLPID)){
-                    Log.e("","");
+                    Log.e("test","test 1111");
                     PidTestFlag = true;
                     write(new StandardPid().startAllPid().getBytes());
                     break;
                 }else if(PID.equals(new MainView().SCHEDULEPID)){
+                    Log.e("test","test 2222");
                     PidTestFlag = true;
                     write(new StandardPid().startSchedulePid().getBytes());
                     break;
