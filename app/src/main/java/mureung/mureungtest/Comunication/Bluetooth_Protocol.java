@@ -434,8 +434,6 @@ public class Bluetooth_Protocol {
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
-                                Log.e("test","test MainView.Voltage_FLAG : " + MainView.Voltage_FLAG + " , MainView.Diagnosis_FLAG : " + MainView.Diagnosis_FLAG +
-                                        " , MainView.PIDTestStart_FLAG : " + MainView.PidTestStart_FLAG);
                                 if(!MainView.Voltage_FLAG&&!MainView.Diagnosis_FLAG){
                                     if(MainView.PidTestStart_FLAG){
                                         new MakeData().defaultData(MainActivity.mainContext,Parse.strVIN,strMaker,strModel,strYear);
@@ -586,6 +584,7 @@ public class Bluetooth_Protocol {
                                 if(PidTestFlag){
                                     pushPID();
                                 }
+
                             }
 
 
@@ -639,7 +638,6 @@ public class Bluetooth_Protocol {
                     write(new StandardPid().startSchedulePid().getBytes());
                 }
             }
-
 
 
         }
@@ -698,12 +696,10 @@ public class Bluetooth_Protocol {
         switch (PageStr.getPageStrData()){
             case PageStr.PidTestView :
                 if(PID.equals(new MainView().ALLPID)){
-                    Log.e("test","test 1111");
                     PidTestFlag = true;
                     write(new StandardPid().startAllPid().getBytes());
                     break;
                 }else if(PID.equals(new MainView().SCHEDULEPID)){
-                    Log.e("test","test 2222");
                     PidTestFlag = true;
                     write(new StandardPid().startSchedulePid().getBytes());
                     break;

@@ -1,5 +1,7 @@
 package mureung.mureungtest.Comunication;
 
+import android.util.Log;
+
 /**
  * Created by user on 2018-01-29.
  */
