@@ -47,14 +47,14 @@ import static mureung.mureungtest.Tool.SearchVINTask.strYear;
  * Created by user on 2017-06-08.
  */
 
-public class Bluetooth_Protocol {
+public class Bluetooth_Protocol2 {
 
-    public static boolean OBD_CONNECTSTATE = false;
+    private static boolean OBD_CONNECTSTATE = false;
 
 
-    private static final String TAG = "Bluetooth_Protocol";
+    private static final String TAG = "Bluetooth_Protocol2";
 
-    public static BluetoothAdapter bluetoothAdapter;
+    private static BluetoothAdapter bluetoothAdapter;
 
     //UUID
     private static final UUID btUUID = UUID
@@ -71,7 +71,7 @@ public class Bluetooth_Protocol {
     private static Handler dataHandler;
     private static String btAddress;
 
-    public static int mState = 0;
+    private static int mState = 0;
 
 
     //태그 값들 지정해줘야함
@@ -81,35 +81,34 @@ public class Bluetooth_Protocol {
     private static final int REQUEST_ENABLE_BT = 3;
     private static final int MESSAGE_READ =3;
     private static final int CONNECT_FAIL = 4;
-    public static boolean SETTING_FLAG = false;
+    private static boolean SETTING_FLAG = false;
     //public static boolean REPAIR_FLAG = false;
 
 
-    public static BroadcastReceiver btReceiver;
+    private static BroadcastReceiver btReceiver;
 
 
-    public static int CONNECTED_STATE = 0;
+    private static int CONNECTED_STATE = 0;
 
     private static boolean REPAIR_FLAG =false;
 
-    public static boolean PidTestFlag = false;
+    private static boolean PidTestFlag = false;
 
-    public static boolean BluetoothConnect = false;
-    public static String obdVersion = null;
-    public static String protocolData = null;
-    public static String protocolDataNum = null;
+    private static boolean BluetoothConnect = false;
+    private static String obdVersion = null;
+    private static String protocolData = null;
+    private static String protocolDataNum = null;
 
-    public static BluetoothDevice bluetooth1Device;
+    private static String pushVIN = null;
 
-    public static String pushVIN = null;
+    public static BluetoothDevice bluetooth2Device;
+    public static boolean Bluetooth2Connected_FLAG = false;
 
-    public static boolean Bluetooth1Connect_FLAG = false;
-
-    public Bluetooth_Protocol(Activity activity , Handler handler) {
+    public Bluetooth_Protocol2(Activity activity , Handler handler) {
         dataHandler = handler;
 
     }
-    public Bluetooth_Protocol() {
+    public Bluetooth_Protocol2() {
 
 
     }
@@ -136,7 +135,7 @@ public class Bluetooth_Protocol {
                         BtList btPairedList;
                         btPairedList = new BtList(device.getName(),device.getAddress());
                         btListArrayList.add(btPairedList);
-                        Log.e("test","device.getName : " + device.getName() + " , device.getAddress : " + device.getAddress());
+                        Log.e("test222","device.getName : " + device.getName() + " , device.getAddress : " + device.getAddress());
                     }
 
                 }
@@ -181,7 +180,8 @@ public class Bluetooth_Protocol {
             BluetoothSocket secureRfComm = null;
             // 디바이스 정보를 얻어서 BluetoothSocket 생성
             btAddress = device.getAddress();
-            Log.e("device"," getName : "+device.getName()+" , getBoundState : "+device.getBondState() + " , getAddress : " + device.getAddress() + " , getType :" + device.getType());
+
+            Log.e("device2222"," getName : "+device.getName()+" , getBoundState : "+device.getBondState() + " , getAddress : " + device.getAddress() + " , getType :" + device.getType());
 
             /**
              * 2018.01.09 by.GeonHo
@@ -198,7 +198,7 @@ public class Bluetooth_Protocol {
                     secureRfComm = device.createInsecureRfcommSocketToServiceRecord(btUUID);
                 }*/
                 secureRfComm = device.createInsecureRfcommSocketToServiceRecord(btUUID);
-                bluetooth1Device = device;
+                bluetooth2Device = device;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -206,7 +206,7 @@ public class Bluetooth_Protocol {
         }
         //블루투스 연결 스레드 시작
         public void run() {
-            Log.e(TAG, "BEGIN mConnectThread");
+            Log.e(TAG, "BEGIN mConnectThread2222");
             if(bluetoothAdapter != null){
                 bluetoothAdapter.cancelDiscovery();
             }
@@ -216,7 +216,7 @@ public class Bluetooth_Protocol {
                 mmSocket.connect();
 
 
-                Log.e(TAG, "Connect Success");
+                Log.e(TAG, "Connect Success2222");
             } catch (IOException e) {
                 connectionFailed(mmDevice.getAddress());
 
@@ -230,7 +230,7 @@ public class Bluetooth_Protocol {
 
                 return;
             }
-            synchronized (Bluetooth_Protocol.this) {
+            synchronized (Bluetooth_Protocol2.this) {
                 mConnectThread = null;
             }
 
@@ -262,7 +262,7 @@ public class Bluetooth_Protocol {
         private final BluetoothSocket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
-        Bypass_Stream bypass_stream;
+        Bypass_Stream2 bypass_stream2;
         int responsTime[] = new int[2];
         final int writeTime = 0;
         final int readTime = 1;
@@ -304,27 +304,27 @@ public class Bluetooth_Protocol {
         //통신에 필요한 Socket 을 선언 및 접속 하는 부분 = 블루투스 송수신 접속
         private ConnectedThread(BluetoothSocket socket) {
 
-            Log.e(TAG, "create ConnectedThread");
+            Log.e(TAG, "create ConnectedThread2222");
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-            Log.e("ConnectedThread","mmSocket "+mmSocket);
+            Log.e("ConnectedThread2222","mmSocket "+mmSocket);
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "temp sockets not created", e);
+                Log.e(TAG, "temp sockets not created2222", e);
             }
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
-            bypass_stream = new Bypass_Stream();
+            bypass_stream2 = new Bypass_Stream2();
             CONNECTED_STATE = 1;
             if(MainActivity.MainActivityHandler != null){
-                MainActivity.MainActivityHandler.obtainMessage(1,"연결됨").sendToTarget();
+                MainActivity.MainActivityHandler.obtainMessage(1,"연결됨2222").sendToTarget();
             }
             new MainView().setObdIcon(true);
             MainView.bluetoothState = true;
-            Bluetooth1Connect_FLAG = true;
+            Bluetooth2Connected_FLAG = true;
 
 
 
@@ -332,7 +332,7 @@ public class Bluetooth_Protocol {
 
         //블루투스 데이터 수신을 스레드로 항상 수신대기함
         public void run() {
-            Log.e(TAG, "BEGIN mConnectedThread");
+            Log.e(TAG, "BEGIN mConnectedThread2222");
 
             byte[] readBuffer = new byte[1024];
             int bytes = 0;
@@ -348,7 +348,7 @@ public class Bluetooth_Protocol {
                     //String 으로 변환
                     bytes = mmInStream.read(readBuffer,0,readBuffer.length);
                     final String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
-                    Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
+                    Log.e("bluetooth_protocol2","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
                     if(!SETTING_FLAG){
@@ -421,7 +421,7 @@ public class Bluetooth_Protocol {
                                 }
                                 dataVIN = received_text;
                                 try {
-                                    bypass_stream.NewStart(received_text);
+                                    bypass_stream2.NewStart(received_text);
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }
@@ -468,7 +468,7 @@ public class Bluetooth_Protocol {
                                 received_text = "";
                                 SETTING_FLAG = true;
                                 if(BluetoothPairFragment.BluetoothTestPage_FLAG){
-                                    new BluetoothPairFragment().bluetooth1TimerStart();
+                                    new BluetoothPairFragment().bluetooth2TimerStart();
                                 }
                             }
 
@@ -482,6 +482,7 @@ public class Bluetooth_Protocol {
                     }else if(SETTING_FLAG){
                         if(strBuffer.contains(">"))
                         {
+
 
 
                             OBD_CONNECTSTATE = true;
@@ -518,7 +519,7 @@ public class Bluetooth_Protocol {
                                         MainView.mainViewHandler.obtainMessage(3,"NO DATA").sendToTarget();
                                     }
                                 }else {
-                                    bypass_stream.NewStart(received_text);
+                                    bypass_stream2.NewStart(received_text);
                                 }
 
                                 MainView.Diagnosis_FLAG = false;
@@ -593,7 +594,7 @@ public class Bluetooth_Protocol {
                                 received_text = "";
                             }else {
                                 try {
-                                    bypass_stream.NewStart(received_text);
+                                    bypass_stream2.NewStart(received_text);
                                 }catch (Exception e){
 
                                 }
@@ -621,6 +622,7 @@ public class Bluetooth_Protocol {
                         }
                     }
                 } catch (IOException e) {
+                    Bluetooth2Connected_FLAG = false;
                     connectionLost(btAddress);
                     e.printStackTrace();
                     if(MainActivity.MainActivityHandler != null){
@@ -675,7 +677,7 @@ public class Bluetooth_Protocol {
         //블루투스 연결을 끊기 위한 부분
         public void cancle() {
             try {
-                Bluetooth1Connect_FLAG = false;
+                Bluetooth2Connected_FLAG = false;
                 mmSocket.close();
             } catch (IOException e) {
                 Log.e(TAG, "close() of connect socket failed", e);
@@ -832,7 +834,7 @@ public class Bluetooth_Protocol {
 
     // 연결 실패했을때
     private void connectionFailed(String address) {
-        Bluetooth1Connect_FLAG = false;
+        Bluetooth2Connected_FLAG = false;
         SETTING_FLAG = false;
         setState(STATE_LISTEN);
         if(mConnectedThread != null){
@@ -854,8 +856,8 @@ public class Bluetooth_Protocol {
 
     // 연결을 잃었을 때
     private void connectionLost(String address) {
-        Bluetooth1Connect_FLAG = false;
         SETTING_FLAG = false;
+        Bluetooth2Connected_FLAG = false;
         setState(STATE_LISTEN);
         if(dataHandler != null){
             dataHandler.obtainMessage(CONNECT_FAIL,0,0,"연결 끊김")
@@ -904,52 +906,13 @@ public class Bluetooth_Protocol {
 
     }
 
-    public void autoSearchBt(Context context, final String address){
-        Log.e("autoSearchBt"," isDiscovering : "+bluetoothAdapter.isDiscovering());
-
-        Log.e("Bluetooth_Protocol","autoSearchBt");
-        if(!bluetoothAdapter.isEnabled()){
-            bluetoothAdapter.enable();
-        }
-        if(bluetoothAdapter.startDiscovery()){
-        }
-        btReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                    final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                    Log.e("autoSearchBt","onReceive getName :  "+device.getName()+"   , getAddress : "+device.getAddress());
-                    if(device.getAddress().equals(address)){
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                            connect(device);
-                            try{
-                                context.unregisterReceiver(btReceiver);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-
-                            btReceiver = null;
-                        }
-                    }
-
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        context.registerReceiver(btReceiver, filter);
-
-
-    }
-
-    public void bluetoothTestAutoSearchBt(Context context){
-
-        if(!Bluetooth1Connect_FLAG){
+    public void bluetoothTest2AutoSearchBt(Context context){
+        if(!Bluetooth2Connected_FLAG){
             SETTING_FLAG = false;
-            if(bluetoothAdapter == null){
+            if(bluetoothAdapter ==null){
                 bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             }
+
             Log.e("Bluetooth_Protocol","autoSearchBt");
             if(!bluetoothAdapter.isEnabled()){
                 bluetoothAdapter.enable();
@@ -978,7 +941,6 @@ public class Bluetooth_Protocol {
                         }
 
 
-
                     }
                 }
             };
@@ -988,8 +950,8 @@ public class Bluetooth_Protocol {
 
 
 
-
     }
+
 
     public void cancle(){
         if(mConnectedThread != null){

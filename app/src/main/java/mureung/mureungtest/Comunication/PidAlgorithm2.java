@@ -16,7 +16,7 @@ import mureung.mureungtest.View.PidTestView.PidTestView4;
  * Created by user on 2018-01-29.
  */
 
-public class PidAlgorithm {
+public class PidAlgorithm2 {
 
     private static float distance = 0 ;
     private static String preTime = null ;
@@ -410,9 +410,10 @@ public class PidAlgorithm {
                     PidTestView1.pidTestView1_dataHandler.obtainMessage(14,Result).sendToTarget();
                 }
                 if(BluetoothPairFragment.BluetoothTestPage_FLAG){
-                    if(Bluetooth_Protocol.Bluetooth1Connect_FLAG){
+
+                    if(Bluetooth_Protocol2.Bluetooth2Connected_FLAG){
                         if(BluetoothPairFragment.bluetoothTestHandler!=null){
-                            BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1ChartNum,Result).sendToTarget();
+                            BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth2ChartNum,Result).sendToTarget();
 
                         }
                     }

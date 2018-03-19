@@ -12,6 +12,7 @@ public class PageStr {
     public static final String BluetoothConnect = "BluetoothConnect";
     public static final String Terminal = "Terminal";
     public static final String Voltage = "Voltage";
+    public static final String BluetoothTest = "BluetoothTest";
     private static String pageStrData ;
 
     public static String getPageStrData() {

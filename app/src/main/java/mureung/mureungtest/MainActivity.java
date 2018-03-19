@@ -2,9 +2,13 @@ package mureung.mureungtest;
 
 import android.Manifest;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +19,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -29,12 +35,13 @@ import mureung.mureungtest.View.VoltageFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     TextView connectText,dataText,protocolText,protocolNumText;
 
     public static Handler MainActivityHandler;
     public static Context mainContext;
+    BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +120,25 @@ public class MainActivity extends AppCompatActivity {
 
         checkPermission(this);
 
+        /*BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter.startDiscovery();
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                    final BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                    Log.e("MainActivity","test onReceive getName :  "+device.getName()+"   , getAddress : "+device.getAddress());
+
+
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(broadcastReceiver, filter);*/
+
 
     }
 
@@ -160,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
             case PageStr.Voltage :
                 mainChangeMenu(new MainView());
                 break;
+            case PageStr.BluetoothTest :
+                mainChangeMenu(new MainView());
+                break;
         }
     }
 
@@ -200,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
     public class BluetoothThread extends Thread{
         private Context context;

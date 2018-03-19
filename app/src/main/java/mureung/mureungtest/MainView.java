@@ -21,6 +21,7 @@ import java.util.TimerTask;
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
+import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.Terminal.TerminalView;
 import mureung.mureungtest.View.VoltageFragment;
@@ -33,7 +34,7 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
 public class MainView extends Fragment implements View.OnClickListener {
 
-    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton;
+    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton,bluetoothPairButton;
     LinearLayout bluetoothConnect;
     ImageView bluetoothIcon;
     static Intent outIntent;
@@ -71,6 +72,9 @@ public class MainView extends Fragment implements View.OnClickListener {
         voltageButton = (LinearLayout)view.findViewById(R.id.voltageButton);
         voltageButton.setOnClickListener(this);
         bluetoothIcon = (ImageView) view.findViewById(R.id.bluetoothIcon);
+
+        bluetoothPairButton = (LinearLayout)view.findViewById(R.id.bluetoothPairButton);
+        bluetoothPairButton.setOnClickListener(this);
         /*emailButton = ( LinearLayout)view.findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this);*/
 
@@ -200,6 +204,11 @@ public class MainView extends Fragment implements View.OnClickListener {
                 }
 
                 break;
+
+            case R.id.bluetoothPairButton :
+                ((MainActivity)getActivity()).mainChangeMenu(new BluetoothPairFragment());
+                break;
+
             /*case R.id.emailButton:
                 Intent email = new Intent(Intent.ACTION_SEND);
                 email.setType("plain/text");
