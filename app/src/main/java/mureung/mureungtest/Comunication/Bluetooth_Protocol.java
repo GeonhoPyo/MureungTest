@@ -178,6 +178,9 @@ public class Bluetooth_Protocol {
                 MainActivity.MainActivityHandler.obtainMessage(1,"연결중").sendToTarget();
                 BluetoothConnect = true;
             }
+            if(BluetoothPairFragment.bluetoothTestHandler != null){
+                BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1StateNum,"연결중");
+            }
             BluetoothSocket secureRfComm = null;
             // 디바이스 정보를 얻어서 BluetoothSocket 생성
             btAddress = device.getAddress();
@@ -245,6 +248,9 @@ public class Bluetooth_Protocol {
                     MakeData.fileName = null;
                     BluetoothConnect = false;
                     PidTestFlag = false;
+                }
+                if(BluetoothPairFragment.bluetoothTestHandler != null){
+                    BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1StateNum,"연결끊김");
                 }
                 new MainView().setObdIcon(false);
                 MainView.bluetoothState = false;
@@ -321,6 +327,9 @@ public class Bluetooth_Protocol {
             CONNECTED_STATE = 1;
             if(MainActivity.MainActivityHandler != null){
                 MainActivity.MainActivityHandler.obtainMessage(1,"연결됨").sendToTarget();
+            }
+            if(BluetoothPairFragment.bluetoothTestHandler != null){
+                BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1StateNum,"연결됨");
             }
             new MainView().setObdIcon(true);
             MainView.bluetoothState = true;
@@ -629,6 +638,9 @@ public class Bluetooth_Protocol {
                         BluetoothConnect = false;
                         PidTestFlag = false;
                     }
+                    if(BluetoothPairFragment.bluetoothTestHandler != null){
+                        BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1StateNum,"연결끊김");
+                    }
                     new MainView().setObdIcon(false);
                     MainView.bluetoothState = false;
 
@@ -861,6 +873,9 @@ public class Bluetooth_Protocol {
             dataHandler.obtainMessage(CONNECT_FAIL,0,0,"연결 끊김")
                     .sendToTarget();
         }
+        if(BluetoothPairFragment.bluetoothTestHandler != null){
+            BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1StateNum,"연결끊김");
+        }
         if(mConnectThread != null){
             mConnectThread.interrupt();
         }
@@ -984,6 +999,8 @@ public class Bluetooth_Protocol {
             };
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             context.registerReceiver(btReceiver, filter);
+        }else {
+            new Bluetooth_Protocol().pushATSetting();
         }
 
 

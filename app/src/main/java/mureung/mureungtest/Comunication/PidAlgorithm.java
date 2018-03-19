@@ -413,7 +413,7 @@ public class PidAlgorithm {
                     if(Bluetooth_Protocol.Bluetooth1Connect_FLAG){
                         if(BluetoothPairFragment.bluetoothTestHandler!=null){
                             BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1ChartNum,Result).sendToTarget();
-
+                            BluetoothPairFragment.bluetoothTestHandler.obtainMessage(BluetoothPairFragment.bluetooth1TextNum,Result).sendToTarget();
                         }
                     }
 

@@ -49,7 +49,7 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
     private int entries2Count = 0;
     public static boolean BluetoothTestPage_FLAG = false;
 
-    private Timer bluetooth1Timer, bluetooth2Timer;
+    private static Timer bluetooth1Timer, bluetooth2Timer;
 
     @Nullable
     @Override
@@ -85,7 +85,7 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
                         LineData lineData1 = new LineData(dataset1);
                         dataset1.setColor(Color.BLUE);
                         bluetooth1Chart.setData(lineData1);
-                        bluetooth1Chart.animateY(10);
+                        bluetooth1Chart.animateY(1);
                         entries1Count ++;
 
                         break;
@@ -95,7 +95,7 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
                         LineData lineData2 = new LineData(dataset2);
                         dataset2.setColor(Color.RED);
                         bluetooth2Chart.setData(lineData2);
-                        bluetooth2Chart.animateY(10);
+                        bluetooth2Chart.animateY(1);
                         entries2Count ++;
                         break;
                     case bluetooth1TextNum :
@@ -153,17 +153,30 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
 
     }
 
+    public void bluetoothTimerStop(){
+        try {
+            bluetooth1Timer.cancel();
+            bluetooth1Timer = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            bluetooth2Timer.cancel();
+            bluetooth2Timer = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         BluetoothTestPage_FLAG = false;
         bluetoothTestHandler = null;
-        if(bluetooth1Timer != null){
-            bluetooth1Timer.cancel();
-        }
-        if(bluetooth2Timer != null){
-            bluetooth2Timer.cancel();
-        }
+
+
+
     }
 
     @Override

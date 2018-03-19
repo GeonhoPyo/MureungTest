@@ -30,6 +30,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.VoltageFragment;
 
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity{
                 mainChangeMenu(new MainView());
                 break;
             case PageStr.BluetoothTest :
+                new BluetoothPairFragment().bluetoothTimerStop();
                 mainChangeMenu(new MainView());
                 break;
         }

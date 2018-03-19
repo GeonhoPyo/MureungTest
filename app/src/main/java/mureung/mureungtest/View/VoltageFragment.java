@@ -1,6 +1,7 @@
 package mureung.mureungtest.View;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -73,7 +74,7 @@ public class VoltageFragment extends Fragment {
                                 LineDataSet dataset = new LineDataSet(entries, "# of Calls");
 
                                 LineData data = new LineData(dataset);
-                                dataset.setColors(ColorTemplate.COLORFUL_COLORS);
+                                dataset.setColor(Color.RED);
 
 
                                 lineChart.setData(data);
