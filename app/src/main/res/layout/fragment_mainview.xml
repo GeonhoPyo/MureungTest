@@ -43,12 +43,13 @@
         android:orientation="horizontal"
         android:layout_marginTop="20dp">
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/pidTestBtn"
             android:layout_gravity="center|top"
             android:gravity="center"
             android:orientation="vertical"
+            android:layout_marginRight="20dp"
             >
             <ImageView
                 android:layout_width="60dp"
@@ -66,8 +67,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/pidScheduleBtn"
             android:layout_gravity="center|top"
             android:gravity="center"
@@ -82,7 +83,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="스케줄링 테스트"
+                android:text="스케줄링"
                 android:textColor="#ffffff"/>
 
 
@@ -97,13 +98,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/terminalButton"
             android:layout_gravity="center|top"
             android:gravity="center"
             android:layout_marginTop="30dp"
             android:orientation="vertical"
+            android:layout_marginRight="20dp"
             >
             <ImageView
                 android:layout_width="60dp"
@@ -121,8 +123,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/diagnosisButton"
             android:layout_gravity="center|top"
             android:gravity="center"
@@ -152,13 +154,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/voltageButton"
             android:layout_gravity="center|top"
             android:gravity="center"
             android:layout_marginTop="30dp"
             android:orientation="vertical"
+            android:layout_marginRight="20dp"
             >
             <ImageView
                 android:layout_width="60dp"
@@ -176,13 +179,14 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/bluetoothPairButton"
             android:layout_gravity="center|top"
             android:gravity="center"
             android:layout_marginTop="30dp"
             android:orientation="vertical"
+
             >
             <ImageView
                 android:layout_width="60dp"
@@ -199,7 +203,60 @@
 
         </LinearLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/cameraPushButton"
+            android:layout_gravity="center|top"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:layout_marginRight="20dp"
+            >
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/diagnosis"
+                android:layout_gravity="center|top"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="영상보내기"
+                android:textColor="#ffffff"/>
 
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/cameraPullButton"
+            android:layout_gravity="center|top"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/diagnosis"
+                android:layout_gravity="center|top"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="영상받기"
+                android:textColor="#ffffff"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 

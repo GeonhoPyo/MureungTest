@@ -2,12 +2,13 @@ package mureung.mureungtest;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +16,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.BluetoothPairFragment;
-import mureung.mureungtest.View.PidTestView.PidTestMainView;
+import mureung.mureungtest.View.Camera.CameraPushFragment;
+import mureung.mureungtest.View.Camera.CameraPullFragment;
 import mureung.mureungtest.View.Terminal.TerminalView;
-import mureung.mureungtest.View.VoltageFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
@@ -34,7 +32,7 @@ import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
 public class MainView extends Fragment implements View.OnClickListener {
 
-    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton,bluetoothPairButton;
+    LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton,bluetoothPairButton, cameraPushButton,cameraPullButton;
     LinearLayout bluetoothConnect;
     ImageView bluetoothIcon;
     static Intent outIntent;
@@ -53,6 +51,8 @@ public class MainView extends Fragment implements View.OnClickListener {
     public static boolean VoltageStart_FLAG = false;
 
 
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,6 +75,12 @@ public class MainView extends Fragment implements View.OnClickListener {
 
         bluetoothPairButton = (LinearLayout)view.findViewById(R.id.bluetoothPairButton);
         bluetoothPairButton.setOnClickListener(this);
+
+        cameraPushButton = (LinearLayout)view.findViewById(R.id.cameraPushButton);
+        cameraPushButton.setOnClickListener(this);
+        cameraPullButton = (LinearLayout)view.findViewById(R.id.cameraPullButton);
+        cameraPullButton.setOnClickListener(this);
+
         /*emailButton = ( LinearLayout)view.findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this);*/
 
@@ -82,6 +88,7 @@ public class MainView extends Fragment implements View.OnClickListener {
         PageStr.setPageStrData(PageStr.Mainview);
         PidTestFlag = false;
         mainViewHandler = new Handler(new Handler.Callback() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean handleMessage(Message msg) {
 
@@ -207,6 +214,14 @@ public class MainView extends Fragment implements View.OnClickListener {
 
             case R.id.bluetoothPairButton :
                 ((MainActivity)getActivity()).mainChangeMenu(new BluetoothPairFragment());
+                break;
+
+            case R.id.cameraPushButton:
+                ((MainActivity)getActivity()).mainChangeMenu(new CameraPushFragment());
+                break;
+
+            case R.id.cameraPullButton :
+                ((MainActivity)getActivity()).mainChangeMenu(new CameraPullFragment());
                 break;
 
             /*case R.id.emailButton:

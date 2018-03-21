@@ -13,6 +13,8 @@ public class PageStr {
     public static final String Terminal = "Terminal";
     public static final String Voltage = "Voltage";
     public static final String BluetoothTest = "BluetoothTest";
+    public static final String CameraPushTest = "CameraPushTest";
+    public static final String CameraPullTest = "CameraPullTest";
     private static String pageStrData ;
 
     public static String getPageStrData() {

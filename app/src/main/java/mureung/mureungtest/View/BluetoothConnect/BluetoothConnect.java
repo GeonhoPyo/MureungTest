@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import mureung.mureungtest.Comunication.Bluetooth_Camera_Protocol;
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.Comunication.BtList;
 import mureung.mureungtest.PageStr;
@@ -58,6 +59,7 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
 
 
         btListView = (ListView)view.findViewById(R.id.btListView);
+        btArrayList = new Bluetooth_Camera_Protocol().enableBluetooth();
         btListAdapter = new BluetoothConnect_List(getActivity(),R.layout.bluetoothconnect_list, btArrayList);
         btListView.setAdapter(btListAdapter);
         btListView.setOnItemClickListener(this);
@@ -78,7 +80,8 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
 
         String address = btArrayList.get(position).btAddress;
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
-        new Bluetooth_Protocol().connectDevice(device);
+        new Bluetooth_Camera_Protocol().connectDevice(device);
+        //new Bluetooth_Protocol().connectDevice(device);
     }
 
     public void btFindDevice(){

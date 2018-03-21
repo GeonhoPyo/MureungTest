@@ -92,7 +92,7 @@ public class Bluetooth_Protocol2 {
 
     private static boolean REPAIR_FLAG =false;
 
-    private static boolean PidTestFlag = false;
+    public static boolean PidTestFlag = false;
 
     private static boolean BluetoothConnect = false;
     private static String obdVersion = null;
@@ -357,7 +357,7 @@ public class Bluetooth_Protocol2 {
                     //String 으로 변환
                     bytes = mmInStream.read(readBuffer,0,readBuffer.length);
                     final String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
-                    Log.e("bluetooth_protocol2","strBuffer : "+strBuffer);
+                    //Log.e("bluetooth_protocol2","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
                     if(!SETTING_FLAG){
@@ -472,12 +472,13 @@ public class Bluetooth_Protocol2 {
                                     String push = "03";
                                     push += "\r";
                                     new Bluetooth_Protocol().write(push.getBytes());
-                                    MainView.DiagnosisStart_FLAG = false;
+
                                 }
                                 received_text = "";
                                 SETTING_FLAG = true;
+
                                 if(BluetoothPairFragment.BluetoothTestPage_FLAG){
-                                    new BluetoothPairFragment().bluetooth2TimerStart();
+                                    write(new StandardPid2().startSchedulePid2().getBytes());
                                 }
                             }
 
@@ -519,21 +520,7 @@ public class Bluetooth_Protocol2 {
                             if(MainActivity.MainActivityHandler != null){
                                 MainActivity.MainActivityHandler.obtainMessage(3,received_text).sendToTarget();
                             }
-                            if(received_text.contains("03")){
-                                if(received_text.contains("SEARCHING")){
-                                    received_text = received_text.replace("SEARCHING...\r","");
-                                }
-                                if(received_text.contains("NO")){
-                                    if(MainView.mainViewHandler!=null){
-                                        MainView.mainViewHandler.obtainMessage(3,"NO DATA").sendToTarget();
-                                    }
-                                }else {
-                                    bypass_stream2.NewStart(received_text);
-                                }
 
-                                MainView.Diagnosis_FLAG = false;
-                                received_text = "";
-                            }
 
 
                             if(received_text.contains("AT RV")){
@@ -541,7 +528,7 @@ public class Bluetooth_Protocol2 {
                             }
 
                             if(received_text.contains("NO DATA")){
-                                //Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
+                                //Log.e("CameraConnectedThread","NoDataCount : " + NoDataCount);
                                 NoDataCount +=1;
                                 if(NoDataCount > 56){
                                     //연결재시도
@@ -549,7 +536,7 @@ public class Bluetooth_Protocol2 {
                                     NoData_FLAG= true;
                                     String pushSP0 = "AT SP0";
                                     pushSP0 += "\r";
-                                    //Log.e("ConnectedThread","pushSP0 : " + pushSP0);
+                                    //Log.e("CameraConnectedThread","pushSP0 : " + pushSP0);
                                     write(pushSP0.getBytes());
                                     /*try {
                                         //new Bluetooth_Protocol().cancel();
@@ -589,14 +576,14 @@ public class Bluetooth_Protocol2 {
                                 if(received_text.contains("SP0")){
                                     String pushData = "010c";
                                     pushData += "\r";
-                                    //Log.e("ConnectedThread","pushData : " + pushData);
+                                    //Log.e("CameraConnectedThread","pushData : " + pushData);
                                     write(pushData.getBytes());
                                     NoData_FLAG = false;
                                 }/*else if(received_text.contains("010c")){
 
                                     String pushProtocol = "AT SP"+protocol[saveProtocolCount];
                                     pushProtocol += "\r";
-                                    //Log.e("ConnectedThread","pushProtocol : " + pushProtocol);
+                                    //Log.e("CameraConnectedThread","pushProtocol : " + pushProtocol);
                                     write(pushProtocol.getBytes());
 
                                 }*/
@@ -669,6 +656,10 @@ public class Bluetooth_Protocol2 {
                     write(new StandardPid().startSchedulePid().getBytes());
                 }
             }
+            if(BluetoothPairFragment.BluetoothTestPage_FLAG){
+                write(new StandardPid2().startSchedulePid2().getBytes());
+            }
+
 
 
         }

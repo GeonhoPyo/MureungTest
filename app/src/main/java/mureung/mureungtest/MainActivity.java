@@ -2,25 +2,19 @@ package mureung.mureungtest;
 
 import android.Manifest;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -30,6 +24,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.VoltageFragment;
@@ -50,13 +45,13 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         mainContext = getBaseContext();
         mainChangeMenu(new MainView());
-        connectText = findViewById(R.id.connectText);
+        connectText = (TextView)findViewById(R.id.connectText);
         connectText.setText("연결 없음");
-        dataText = findViewById(R.id.dataText);
+        dataText = (TextView)findViewById(R.id.dataText);
         dataText.setText("Data");
-        protocolText = findViewById(R.id.protocolText);
+        protocolText = (TextView)findViewById(R.id.protocolText);
         protocolText.setText("Protocol : ");
-        protocolNumText = findViewById(R.id.protocolNumText);
+        protocolNumText = (TextView)findViewById(R.id.protocolNumText);
         protocolNumText.setText("Protocol Num : ");
 
 
@@ -143,7 +138,6 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -189,6 +183,13 @@ public class MainActivity extends AppCompatActivity{
                 break;
             case PageStr.BluetoothTest :
                 new BluetoothPairFragment().bluetoothTimerStop();
+                Bluetooth_Protocol.PidTestFlag = false;
+                mainChangeMenu(new MainView());
+                break;
+            case PageStr.CameraPushTest:
+                mainChangeMenu(new MainView());
+                break;
+            case PageStr.CameraPullTest:
                 mainChangeMenu(new MainView());
                 break;
         }
@@ -201,14 +202,17 @@ public class MainActivity extends AppCompatActivity{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!isPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
                     !isPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                    !isPermission(context, Manifest.permission.CALL_PHONE) ||
                     !isPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CAMERA) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_EXTERNAL_STORAGE) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 }
                 ActivityCompat.requestPermissions((Activity)context,new String[]{
                                 android.Manifest.permission.ACCESS_FINE_LOCATION,
                                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                                android.Manifest.permission.CAMERA,
                                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         1000);
             }
@@ -240,6 +244,7 @@ public class MainActivity extends AppCompatActivity{
 
             this.context = context;
             this.obdSN = obdSN;
+
         }
         @Override
         public void run() {

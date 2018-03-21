@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -58,7 +59,7 @@ public class Bluetooth_Protocol {
 
     //UUID
     private static final UUID btUUID = UUID
-            .fromString("00001101-0000-1000-8000-00805f9b34fb");
+            .fromString("00001101-0000-1000-8000-00805F9B34FB");
     //00001101-0000-1000-8000-00805f9b34fb
     //00000000-0000-1000-8000-00805F9B34FB
 
@@ -127,12 +128,16 @@ public class Bluetooth_Protocol {
     public ArrayList<BtList> enableBluetooth(){
         ArrayList<BtList> btListArrayList = new ArrayList<BtList>();
         if(getState()!=3){
-            if(bluetoothAdapter!=null && !bluetoothConnected()){
+            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if(bluetoothAdapter!=null){
+
                 setState(STATE_LISTEN);
                 //페어링된 기기
                 Set<BluetoothDevice> pairedDevice = bluetoothAdapter.getBondedDevices();
                 if(pairedDevice.size()>0){
+
                     for(BluetoothDevice device : pairedDevice){
+
                         BtList btPairedList;
                         btPairedList = new BtList(device.getName(),device.getAddress());
                         btListArrayList.add(btPairedList);
@@ -164,6 +169,7 @@ public class Bluetooth_Protocol {
 
 
     }*/
+
 
 
     //블루투스 연결 Thread
@@ -200,7 +206,8 @@ public class Bluetooth_Protocol {
                     Log.e("test","createInsecureRfcommSocketToServiceRecord");
                     secureRfComm = device.createInsecureRfcommSocketToServiceRecord(btUUID);
                 }*/
-                secureRfComm = device.createInsecureRfcommSocketToServiceRecord(btUUID);
+                //secureRfComm = device.createInsecureRfcommSocketToServiceRecord(btUUID);
+                secureRfComm = device.createRfcommSocketToServiceRecord(btUUID);
                 bluetooth1Device = device;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -310,11 +317,11 @@ public class Bluetooth_Protocol {
         //통신에 필요한 Socket 을 선언 및 접속 하는 부분 = 블루투스 송수신 접속
         private ConnectedThread(BluetoothSocket socket) {
 
-            Log.e(TAG, "create ConnectedThread");
+            Log.e(TAG, "create CameraConnectedThread");
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-            Log.e("ConnectedThread","mmSocket "+mmSocket);
+            Log.e("CameraConnectedThread","mmSocket "+mmSocket);
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
@@ -476,8 +483,9 @@ public class Bluetooth_Protocol {
                                 }
                                 received_text = "";
                                 SETTING_FLAG = true;
+
                                 if(BluetoothPairFragment.BluetoothTestPage_FLAG){
-                                    new BluetoothPairFragment().bluetooth1TimerStart();
+                                    write(new StandardPid().startSchedulePid().getBytes());
                                 }
                             }
 
@@ -518,7 +526,7 @@ public class Bluetooth_Protocol {
                             if(MainActivity.MainActivityHandler != null){
                                 MainActivity.MainActivityHandler.obtainMessage(3,received_text).sendToTarget();
                             }
-                            if(received_text.contains("03")){
+                            if(received_text.contains("03")&&MainView.DiagnosisStart_FLAG){
                                 if(received_text.contains("SEARCHING")){
                                     received_text = received_text.replace("SEARCHING...\r","");
                                 }
@@ -540,7 +548,7 @@ public class Bluetooth_Protocol {
                             }
 
                             if(received_text.contains("NO DATA")){
-                                //Log.e("ConnectedThread","NoDataCount : " + NoDataCount);
+                                //Log.e("CameraConnectedThread","NoDataCount : " + NoDataCount);
                                 NoDataCount +=1;
                                 if(NoDataCount > 56){
                                     //연결재시도
@@ -548,7 +556,7 @@ public class Bluetooth_Protocol {
                                     NoData_FLAG= true;
                                     String pushSP0 = "AT SP0";
                                     pushSP0 += "\r";
-                                    //Log.e("ConnectedThread","pushSP0 : " + pushSP0);
+                                    //Log.e("CameraConnectedThread","pushSP0 : " + pushSP0);
                                     write(pushSP0.getBytes());
                                     /*try {
                                         //new Bluetooth_Protocol().cancel();
@@ -588,14 +596,14 @@ public class Bluetooth_Protocol {
                                 if(received_text.contains("SP0")){
                                     String pushData = "010c";
                                     pushData += "\r";
-                                    //Log.e("ConnectedThread","pushData : " + pushData);
+                                    //Log.e("CameraConnectedThread","pushData : " + pushData);
                                     write(pushData.getBytes());
                                     NoData_FLAG = false;
                                 }/*else if(received_text.contains("010c")){
 
                                     String pushProtocol = "AT SP"+protocol[saveProtocolCount];
                                     pushProtocol += "\r";
-                                    //Log.e("ConnectedThread","pushProtocol : " + pushProtocol);
+                                    //Log.e("CameraConnectedThread","pushProtocol : " + pushProtocol);
                                     write(pushProtocol.getBytes());
 
                                 }*/
@@ -667,6 +675,9 @@ public class Bluetooth_Protocol {
                     write(new StandardPid().startSchedulePid().getBytes());
                 }
             }
+            if(BluetoothPairFragment.BluetoothTestPage_FLAG){
+                write(new StandardPid().startSchedulePid().getBytes());
+            }
 
 
         }
@@ -734,6 +745,7 @@ public class Bluetooth_Protocol {
                     write(new StandardPid().startSchedulePid().getBytes());
                     break;
                 }
+
 
         }
     }
@@ -830,7 +842,7 @@ public class Bluetooth_Protocol {
     // 값을 쓰는 부분(보내는 부분)
     public void write(byte[] out) {
         ConnectedThread r;
-        //Log.e("test","write out : " + new String(out,0,out.length) );
+        Log.e("test","write out : " + new String(out,0,out.length) );
         synchronized (this) {
             if (mState != STATE_CONNECTED){
                 return;

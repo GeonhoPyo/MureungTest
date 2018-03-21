@@ -74,6 +74,8 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
         bluetooth2Btn.setOnClickListener(this);
 
         PageStr.setPageStrData(PageStr.BluetoothTest);
+        Bluetooth_Protocol.PidTestFlag = true;
+        Bluetooth_Protocol2.PidTestFlag = true;
 
         bluetoothTestHandler = new Handler(new Handler.Callback() {
             @Override
@@ -134,7 +136,7 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
                     bluetoothTestPush1 += "\r";
                     new Bluetooth_Protocol().write(bluetoothTestPush1.getBytes());
                 }
-            },0,1000);
+            },0,1500);
         }
 
     }
@@ -148,21 +150,27 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
                     bluetoothTestPush2 += "\r";
                     new Bluetooth_Protocol2().write(bluetoothTestPush2.getBytes());
                 }
-            },0,1000);
+            },0,1500);
         }
 
     }
 
     public void bluetoothTimerStop(){
         try {
-            bluetooth1Timer.cancel();
-            bluetooth1Timer = null;
+            if(bluetooth1Timer != null){
+                bluetooth1Timer.cancel();
+                bluetooth1Timer = null;
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
         try {
-            bluetooth2Timer.cancel();
-            bluetooth2Timer = null;
+            if(bluetooth2Timer != null){
+                bluetooth2Timer.cancel();
+                bluetooth2Timer = null;
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -174,7 +182,7 @@ public class BluetoothPairFragment extends Fragment implements View.OnClickListe
         super.onDestroy();
         BluetoothTestPage_FLAG = false;
         bluetoothTestHandler = null;
-
+        Bluetooth_Protocol.PidTestFlag = false;
 
 
     }
