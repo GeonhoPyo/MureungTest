@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.media.FaceDetector;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +55,7 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
     public static Handler cameraTestHandler ;
     public static final int cameraStateText = 1;
     public static final int cameraSetIamgeView = 2;
+    private static Bitmap pushBitmap ;
     Camera mCamera ;
     private SurfaceView mCameraView;
     private SurfaceHolder mCameraHolder;
@@ -151,6 +154,7 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
         try {
             if(mCamera==null){
                 mCamera.setPreviewDisplay(holder);
+
                 mCamera.startPreview();
             }
         }catch (IOException e){
@@ -182,7 +186,7 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
             mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                 @Override
                 public void onPreviewFrame(byte[] data, Camera camera) {
-
+                    Log.e("CameraPush","onPreviewFrame");
                     Camera.Parameters parameters = mCamera.getParameters();
                     int width = parameters.getPreviewSize().width;
                     int height = parameters.getPreviewSize().height;
@@ -197,24 +201,49 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
 
                     }*/
 
+
+                    ByteArrayOutputStream outstr = new ByteArrayOutputStream();
+                    Rect rect = new Rect(0,0,width,height);
+                    YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21,width,height,null);
+                    yuvImage.compressToJpeg(rect,100,outstr);
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    final Bitmap bitmap = BitmapFactory.decodeByteArray(outstr.toByteArray(),0,outstr.size(),options);
+
+
+
                     if(Bluetooth_Camera_Protocol.PushCameraDataReady_FLAG){
                         CameraData cameraData = new CameraData(data,width,height,format);
                         Log.e("CameraPushFragment","onPreviewFrame data : " + data + " , width : " + width + " , height : " + height + " , format : " + format );
+
+
                         try {
 
-                            if(count > 2){
-                                ByteArrayOutputStream outstr = new ByteArrayOutputStream();
+                            if(count > 5){
+                                /*ByteArrayOutputStream outstr = new ByteArrayOutputStream();
                                 Rect rect = new Rect(0,0,width,height);
                                 YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21,width,height,null);
-                                yuvImage.compressToJpeg(rect,1,outstr);
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(outstr.toByteArray(),0,outstr.size());
+                                yuvImage.compressToJpeg(rect,80,outstr);
+                                BitmapFactory.Options options = new BitmapFactory.Options();
+                                options.inSampleSize = 8;
+                                final Bitmap bitmap = BitmapFactory.decodeByteArray(outstr.toByteArray(),0,outstr.size(),options);*/
 
-                                byte[] bitmapByte = bitmapToByteArray(bitmap);
+                                final byte[] bitmapByte = bitmapToByteArray(bitmap);
                                 Log.e("test","bitmapByte.lenght : " + bitmapByte.length);
-                                String length = String.valueOf(bitmapByte.length)+"length/"+"\r";
+                                String length = "<length>"+String.valueOf(bitmapByte.length)+"</length>";
                                 new Bluetooth_Camera_Protocol().write(length.getBytes());
-                                new Bluetooth_Camera_Protocol().write(bitmapToByteArray(bitmap));
-                                new Bluetooth_Camera_Protocol().write("\r".getBytes());
+                                new Bluetooth_Camera_Protocol().write("\n".getBytes());
+
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        new Bluetooth_Camera_Protocol().write(bitmapByte);
+                                        new Bluetooth_Camera_Protocol().write("\n".getBytes());
+                                    }
+                                },5);
+                                /*new Bluetooth_Camera_Protocol().write(bitmapToByteArray(bitmap));
+                                new Bluetooth_Camera_Protocol().write("\r".getBytes());*/
 
                                 count = 0;
                             }
@@ -237,9 +266,11 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
         }
     }
 
+
+
     private byte[] bitmapToByteArray(Bitmap bitmap){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,1,stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream);
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
@@ -300,8 +331,12 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
         }
 
 
-
+        //전방 카메라 실행
+        //mCamera = Camera.open(findFrontSideCamera());
+        //후방 카메라 실행
         mCamera = Camera.open();
+
+
         // 카메라 화면 터치시 자동 초점 설정
         mCameraView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,6 +367,20 @@ public class CameraPushFragment extends Fragment implements View.OnClickListener
 
 
         setCameraRotation();
+    }
+
+    private int findFrontSideCamera(){
+        int cameraId = -1;
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for(int i = 0 ; i < numberOfCameras ; i++){
+            Camera.CameraInfo cmInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(i,cmInfo);
+            if(cmInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+                cameraId = i;
+                break;
+            }
+        }
+        return cameraId;
     }
 
 

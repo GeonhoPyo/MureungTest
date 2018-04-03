@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity{
             case PageStr.CameraPullTest:
                 mainChangeMenu(new MainView());
                 break;
+            case PageStr.WifiTest :
+                mainChangeMenu(new MainView());
+                break;
         }
     }
 

@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.Build;
@@ -21,12 +22,15 @@ import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.android.gms.vision.face.FaceDetector;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -42,6 +46,7 @@ import mureung.mureungtest.Tool.Time_DataBridge;
 import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.Camera.CameraData;
 import mureung.mureungtest.View.Camera.CameraPullFragment;
+import mureung.mureungtest.View.Camera.CameraPushFragment;
 import mureung.mureungtest.View.Terminal.TerminalView;
 
 import static mureung.mureungtest.Comunication.Bypass_Stream.dataVIN;
@@ -344,8 +349,11 @@ public class Bluetooth_Camera_Protocol {
         public void run() {
             Log.e(TAG, "BEGIN mCameraConnectedThread");
             byte[] readBuffer = new byte[1024];
+            byte[] testBuffer = null;
             int bytes = 0;
             String received_text = "";
+            int addByte = 0;
+            int dataLength = 0;
 
             if(MainActivity.MainActivityHandler != null){
                 MainActivity.MainActivityHandler.obtainMessage(1,"연결 됨").sendToTarget();
@@ -356,12 +364,61 @@ public class Bluetooth_Camera_Protocol {
                 try {
 
                     if(PageStr.getPageStrData().equals(PageStr.CameraPullTest)){
+                        bytes = mmInStream.read(readBuffer,0,readBuffer.length);
+                        String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
+                        int intLength = 0;
 
                         //여기선 read
-                        bytes = mmInStream.read(readBuffer,0,readBuffer.length);
+                        /*bytes = mmInStream.read(readBuffer,0,readBuffer.length);
 
-                        Log.e("test","test bytes : " + bytes);
-                        final String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
+                        //Log.e("test","test bytes : " + bytes);
+                        String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
+                        int intLength = 0;
+
+                        received_text += strBuffer;
+                        received_text = received_text.replace("\r","");
+                        if(received_text.contains("</length>")){
+                            String[] data = received_text.split("<length>");
+                            data = data[1].split("</length>");
+                            String strLength = data[0];
+                            if(!strLength.matches("^[0-9]*$")){
+                                StringBuilder strRecivedText = new StringBuilder();
+                                for(int i = 0 ; i < strLength.length() ; i ++){
+
+                                    String checkText = strLength.substring(i,i+1);
+                                    if(Pattern.matches("^[0-9]*$",checkText)){
+                                        strRecivedText.append(checkText);
+                                    }
+                                }
+                                strLength = String.valueOf(strRecivedText);
+                            }
+                            Log.e("Bluetooth_Camera","length : " + strLength);
+                            received_text = received_text.replace("<length>","");
+                            received_text = received_text.replace("</length>","");
+                            received_text = received_text.replace(strLength,"");
+                        }
+
+                        if(received_text.contains("</body>")){
+                            String[] data = received_text.split("</body>");
+                            data = data[0].split("<body>");
+                            String strBody = data[1];
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(strBody.getBytes(),0,strBody.getBytes().length);
+                            new CameraPullFragment().setCameraImage(bitmap);
+                            received_text = received_text.replace("<body>","");
+                            received_text = received_text.replace("</body>","");
+                            received_text = received_text.replace(strBody,"");
+                        }*/
+
+
+
+
+
+
+
+
+
+
+
 
                         /*if(strBuffer.contains("length/")){
                             strBuffer.replace("length/","");
@@ -369,19 +426,132 @@ public class Bluetooth_Camera_Protocol {
                             Log.e("test","test length : " + length);
                         }*/
 
-                        Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
-                        for(int i = 0 ; i < 20 ; i ++){
+                        //Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
+
+                        if(strBuffer.contains("<length>")){
+                            //Log.e("test","strBuffer : " + strBuffer );
+                            String[] spTest = strBuffer.split("<length>");
+                            //Log.e("test","spTest : " + String.valueOf(spTest[1]));
+                            String spTest2= spTest[1];
+                            String[] spTest3 = spTest2.split("</length>");
+                            String strLength = spTest3[0];
+                            //Log.e("Bluetooth_Camera","length : " + strLength);
 
 
+
+
+                            if(strLength != null){
+                                strLength = strLength.replace("<length>","");
+                                strLength = strLength.replace("</length>","");
+                            }
+
+                            try{
+                                if(!strLength.matches("^[0-9]*$")){
+                                    StringBuilder strRecivedText = new StringBuilder();
+                                    for(int i = 0 ; i < strLength.length() ; i ++){
+
+                                        String checkText = strLength.substring(i,i+1);
+                                        if(Pattern.matches("^[0-9]*$",checkText)){
+                                            strRecivedText.append(checkText);
+                                        }
+                                    }
+                                    strLength = String.valueOf(strRecivedText);
+                                }
+                                intLength = Integer.parseInt(String.valueOf(strLength));
+                                dataLength = intLength +1;
+                                testBuffer = new byte[dataLength+5];
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            //Log.e("Bluetooth_Camera","int length : " + String.valueOf(intLength));
+                            strBuffer = "";
+                            addByte = 0;
+                        }else {
+
+                            if(testBuffer != null){
+                                try {
+                                    //Log.e("Bluetooth_Camera","addByte : " + addByte + " , bytes : " + bytes);
+                                    System.arraycopy(readBuffer,0,testBuffer,addByte,bytes);
+                                    addByte += bytes;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                                //Log.e("test","test addByte : " + addByte  + " , dataLength : " + dataLength);
+
+                                try {
+                                    if(addByte == dataLength){
+                                        //Log.e("test","test 111");
+                                        /*Log.e("test","test 1111 ");
+                                        ByteArrayOutputStream outstr = new ByteArrayOutputStream();
+                                        Log.e("test","test 2222 ");
+                                        //Rect rect = new Rect(0,0,1920,1080);
+                                        Log.e("test","test 3333 ");
+                                        YuvImage yuvImage = new YuvImage(testBuffer, ImageFormat.NV21,1920,1080,null);
+                                        Log.e("test","test 4444 testBuffer.length : " + testBuffer.length);
+
+                                        yuvImage.compressToJpeg(new Rect(0,0,yuvImage.getWidth(),yuvImage.getHeight()),100,outstr);
+                                        Log.e("test","test 5555 ");
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(outstr.toByteArray(),0,outstr.size());
+                                        Log.e("test","test 6666 ");
+                                        new CameraPullFragment().setCameraImage(bitmap);*/
+
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(testBuffer,0,testBuffer.length);
+                                        try {
+                                            if(bitmap!= null){
+                                                //Log.e("test","bitmap.getWidth() : " + bitmap.getWidth() + " , bitmap.getHeight() : " + bitmap.getHeight());
+                                            }
+
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+
+
+                                        /*try {
+                                            FaceDetector.Face[] faces = new FaceDetector.Face[2];
+                                            FaceDetector detector = new FaceDetector(bitmap.getWidth(),bitmap.getHeight(),faces.length);
+                                            int numFaces=detector.findFaces(bitmap,faces);
+                                            Log.e("FaceDetector","numFaces :  "+numFaces);
+                                            if(faces.length!=0){
+                                                for(FaceDetector.Face face: faces){
+                                                    PointF midPoint = new PointF();
+                                                    face.getMidPoint(midPoint);
+                                                    float eyesDistance = face.eyesDistance();
+                                                    Log.e("FaceDetector","eyesDistance :  " + eyesDistance);
+                                                }
+                                            }
+
+
+
+                                        }catch (Exception e){
+                                            e.printStackTrace();
+                                        }*/
+
+                                        new CameraPullFragment().setCameraImage(bitmap);
+
+
+                                    }
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+
+                            }
                         }
+
+
+
+
+
+
+
+
+
+
                         /*byte[] encodeByte = Base64.decode(strBuffer,Base64.DEFAULT);
                         InputStream inputStream = new ByteArrayInputStream(encodeByte);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);*/
-                        if(strBuffer.contains(">GEONHO<")){
 
-                        }else {
-                            Log.e("test","bytes : " + bytes);
-                        }
                        /* Log.e("test","test 2222 ");
                         ByteArrayOutputStream outstr = new ByteArrayOutputStream();
                         Log.e("test","test 3333 ");

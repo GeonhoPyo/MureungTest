@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.text.Line;
+
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
@@ -23,6 +25,7 @@ import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.Camera.CameraPushFragment;
 import mureung.mureungtest.View.Camera.CameraPullFragment;
 import mureung.mureungtest.View.Terminal.TerminalView;
+import mureung.mureungtest.View.Wifi.WifiTestFragment;
 
 import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
 
@@ -34,6 +37,7 @@ public class MainView extends Fragment implements View.OnClickListener {
 
     LinearLayout pidTestBtn,terminalButton,pidScheduleBtn, diagnosisButton,voltageButton,bluetoothPairButton, cameraPushButton,cameraPullButton;
     LinearLayout bluetoothConnect;
+    LinearLayout wifiTestButton;
     ImageView bluetoothIcon;
     static Intent outIntent;
     public static Handler mainViewHandler;
@@ -80,6 +84,9 @@ public class MainView extends Fragment implements View.OnClickListener {
         cameraPushButton.setOnClickListener(this);
         cameraPullButton = (LinearLayout)view.findViewById(R.id.cameraPullButton);
         cameraPullButton.setOnClickListener(this);
+
+        wifiTestButton = (LinearLayout)view.findViewById(R.id.wifiTestButton);
+        wifiTestButton.setOnClickListener(this);
 
         /*emailButton = ( LinearLayout)view.findViewById(R.id.emailButton);
         emailButton.setOnClickListener(this);*/
@@ -232,6 +239,10 @@ public class MainView extends Fragment implements View.OnClickListener {
                 email.putExtra(Intent.EXTRA_TEXT,"test");
                 startActivity(email);
                 break;*/
+
+            case R.id.wifiTestButton :
+                ((MainActivity)getActivity()).mainChangeMenu(new WifiTestFragment());
+                break;
 
         }
     }

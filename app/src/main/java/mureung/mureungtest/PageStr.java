@@ -15,6 +15,7 @@ public class PageStr {
     public static final String BluetoothTest = "BluetoothTest";
     public static final String CameraPushTest = "CameraPushTest";
     public static final String CameraPullTest = "CameraPullTest";
+    public static final String WifiTest ="WifiTest";
     private static String pageStrData ;
 
     public static String getPageStrData() {
