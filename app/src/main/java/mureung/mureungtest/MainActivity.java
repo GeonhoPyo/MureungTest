@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -39,10 +40,14 @@ public class MainActivity extends AppCompatActivity{
     public static Context mainContext;
     BroadcastReceiver broadcastReceiver;
 
+    public static WifiP2pManager wifiP2pManager ;
+    public static WifiP2pManager.Channel channel ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mainContext = getBaseContext();
         mainChangeMenu(new MainView());
         connectText = (TextView)findViewById(R.id.connectText);
@@ -53,6 +58,10 @@ public class MainActivity extends AppCompatActivity{
         protocolText.setText("Protocol : ");
         protocolNumText = (TextView)findViewById(R.id.protocolNumText);
         protocolNumText.setText("Protocol Num : ");
+
+
+        wifiP2pManager = (WifiP2pManager)getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = wifiP2pManager.initialize(this,getMainLooper(),null);
 
 
         ConnectivityManager connectivityManager = (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import mureung.mureungtest.Comunication.Bluetooth_Camera_Protocol;
 import mureung.mureungtest.Comunication.Bluetooth_Protocol;
 import mureung.mureungtest.Comunication.BtList;
+import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;
 
@@ -41,6 +45,8 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
     BluetoothConnect_List btListAdapter;
     ArrayList<BtList> btArrayList = new ArrayList<BtList>();
     BroadcastReceiver btReceiver = null;
+    WifiP2pManager wifiP2pManager ;
+
 
 
     @Nullable
@@ -49,6 +55,8 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
         View view = inflater.inflate(R.layout.fragment_bluetoothconnect,container,false);
         PageStr.setPageStrData(PageStr.BluetoothConnect);
 
+
+
         searchBtn = (Button)view.findViewById(R.id.searchBtn);
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +64,50 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
                 btFindDevice();
             }
         });
+        /*MainActivity.wifiP2pManager.discoverPeers(MainActivity.channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.e("BluetoothConnect","onSuccess");
+            }
 
+            @Override
+            public void onFailure(int reason) {
+                Log.e("BluetoothConnect","onFailure");
+            }
+        });
+
+        BroadcastReceiver wifiP2PReceiver = new BroadcastReceiver() {
+            @Override    public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                    int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
+                    if (state == -1) return;
+                    if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
+                        Log.e("wifiP2PReceiver", "WIFI_P2P_STATE_ENABLED");
+                        requestPeers();            } else {
+                        Log.i("wifiP2PReceiver", "WIFI_P2P_STATE_DISABLED");            }
+                } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+                    Log.i("wifiP2PReceiver", "WIFI_P2P_PEERS_CHANGED_ACTION");            //do request peer
+                    requestPeers();
+                    NetworkInfo netInfo = (NetworkInfo) intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);            if (netInfo != null && netInfo.isConnected()) {
+                        Log.i("wifiP2PReceiver", "device connected:: " + netInfo.isConnected());
+
+
+                        MainActivity.wifiP2pManager.requestConnectionInfo(MainActivity.channel, new WifiP2pManager.ConnectionInfoListener() {
+                            @Override
+                            public void onConnectionInfoAvailable(WifiP2pInfo info) {
+                                //wifiP2pManager = info;
+                            }
+
+                        });
+                    }
+                } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                    Log.i("wifiP2PReceiver", "WIFI_P2P_CONNECTION_CHANGED_ACTION");
+                } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+                    Log.i("wifiP2PReceiver", "WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");        }
+            }
+        };
+*/
 
         btListView = (ListView)view.findViewById(R.id.btListView);
         btArrayList = new Bluetooth_Camera_Protocol().enableBluetooth();
@@ -80,8 +131,8 @@ public class BluetoothConnect extends Fragment implements AdapterView.OnItemClic
 
         String address = btArrayList.get(position).btAddress;
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(address);
-        new Bluetooth_Camera_Protocol().connectDevice(device);
-        //new Bluetooth_Protocol().connectDevice(device);
+        //new Bluetooth_Camera_Protocol().connectDevice(device);
+        new Bluetooth_Protocol().connectDevice(device);
     }
 
     public void btFindDevice(){
