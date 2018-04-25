@@ -5,19 +5,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.MainView;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;

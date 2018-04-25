@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import mureung.mureungtest.Comunication.BtList;
+import mureung.mureungtest.Communication.BtList;
 import mureung.mureungtest.R;
 
 /**

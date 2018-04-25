@@ -2,19 +2,18 @@ package mureung.mureungtest.Tool;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import java.util.regex.Pattern;
 
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.DataBase.PIDTEST;
 import mureung.mureungtest.DataBase.PIDTEST_DBHelper;
 import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.MainView;
 import mureung.mureungtest.View.VoltageFragment;
 
-import static mureung.mureungtest.Comunication.Bluetooth_Protocol.obdVersion;
-import static mureung.mureungtest.Comunication.Bypass_Stream.dataVIN;
+import static mureung.mureungtest.Communication.Bluetooth_Protocol.obdVersion;
+import static mureung.mureungtest.Communication.Bypass_Stream.dataVIN;
 
 /**
  * Created by user on 2018-01-31.

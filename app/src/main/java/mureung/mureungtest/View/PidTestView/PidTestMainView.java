@@ -8,9 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.MainView;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;

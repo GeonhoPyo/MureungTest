@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Handler;
@@ -25,12 +27,14 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import java.lang.reflect.Method;
+
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.VoltageFragment;
 
-import static mureung.mureungtest.Comunication.Bluetooth_Protocol.btReceiver;
+import static mureung.mureungtest.Communication.Bluetooth_Protocol.btReceiver;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -41,12 +45,17 @@ public class MainActivity extends AppCompatActivity{
     BroadcastReceiver broadcastReceiver;
 
     public static WifiP2pManager wifiP2pManager ;
-    public static WifiP2pManager.Channel channel ;
+    //public static WifiP2pManager.Channel channel ;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //Log.e("test","configApState() : " + configApState());
 
         mainContext = getBaseContext();
         mainChangeMenu(new MainView());
@@ -61,7 +70,7 @@ public class MainActivity extends AppCompatActivity{
 
 
         wifiP2pManager = (WifiP2pManager)getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = wifiP2pManager.initialize(this,getMainLooper(),null);
+        //channel = wifiP2pManager.initialize(this,getMainLooper(),null);
 
 
         ConnectivityManager connectivityManager = (ConnectivityManager)getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -210,36 +219,69 @@ public class MainActivity extends AppCompatActivity{
     public static boolean isPermission(Context context, String strPermission){
         return ActivityCompat.checkSelfPermission(context, strPermission) == PackageManager.PERMISSION_GRANTED;
     }
+
     public static void checkPermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!isPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    !isPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) ||
                     !isPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                    !isPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                    !isPermission(context, Manifest.permission.CAMERA) ||
+                    !isPermission(context, Manifest.permission.RECORD_AUDIO) ||
                     !isPermission(context, Manifest.permission.CALL_PHONE) ||
-                    !isPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+                    !isPermission(context, Manifest.permission.READ_CONTACTS) ||
+                    !isPermission(context, Manifest.permission.READ_CALL_LOG) ||
+                    !isPermission(context, Manifest.permission.WRITE_CALL_LOG) ||
+                    !isPermission(context, Manifest.permission.RECEIVE_SMS) ||
+                    !isPermission(context, Manifest.permission.SEND_SMS) ||
+                    !isPermission(context, Manifest.permission.READ_PHONE_STATE) ||
+                    !isPermission(context, Manifest.permission.READ_SMS) ||
+                    !isPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_COARSE_LOCATION) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_EXTERNAL_STORAGE) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.RECORD_AUDIO) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CALL_PHONE) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_CONTACTS) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_CALL_LOG) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_CALL_LOG) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.RECEIVE_SMS) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.SEND_SMS) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_PHONE_STATE) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_SMS) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
                 }
                 ActivityCompat.requestPermissions((Activity)context,new String[]{
-                                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                                android.Manifest.permission.CAMERA,
-                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,       // 위치 서비스(정확한 위치 판별 | GPS, Wi-Fi 또는 데이터 사용)
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION,     // 위치 서비스(대략적인 위치 판별 | Wi-Fi 또는 데이터 사용)
+                                android.Manifest.permission.READ_EXTERNAL_STORAGE,      // 사진, 미디어, 파일 읽기
+                                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,     // 사진, 미디어, 파일 쓰기
+                                android.Manifest.permission.CAMERA,                     // 사진 찍기, 비디오 녹화
+                                android.Manifest.permission.RECORD_AUDIO,               // 오디오 녹음
+                                android.Manifest.permission.CALL_PHONE,                 // 전화 걸기, 관리
+                                android.Manifest.permission.READ_CONTACTS,              // Contacts 관리
+                                android.Manifest.permission.READ_CALL_LOG,              // 전화 걸기, 관리
+                                android.Manifest.permission.WRITE_CALL_LOG,             // 전화 걸기, 관리
+                                android.Manifest.permission.RECEIVE_SMS,                // SMS 보내기, 보기
+                                android.Manifest.permission.SEND_SMS,                   // SMS 보내기, 보기
+                                android.Manifest.permission.READ_PHONE_STATE,           // 단말 정보 접근
+                                android.Manifest.permission.READ_SMS,                   // SMS 보내기, 보기
+                                android.Manifest.permission.MODIFY_AUDIO_SETTINGS},     // 오디오 설정
                         1000);
             }
-
+            //다른앱으로 그리기 권한은 설정창으로 이동해서 사용자가 직접 입력을 해야 바꿀수있음
             if(Settings.canDrawOverlays(context)){
                 if(context != null){
-                    Log.e("test","다른 앱 위에 그리기 권한  "+Settings.canDrawOverlays(context));
+
                 }
 
             }else{
                 if(context != null){
-                    Log.e("test","다른 앱 위에 그리기 권한  "+Settings.canDrawOverlays(context));
+
                     Uri uri = Uri.fromParts("package",context.getPackageName(),null);
                     Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,uri);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);
                 }
 
@@ -279,6 +321,45 @@ public class MainActivity extends AppCompatActivity{
                 }
             }*/
         }
+    }
+
+
+    /**
+     * 2018.04.04 by.GeonHo
+     * 핫스팟 자동으로 켜기 부분
+     * configApState() 키면 자동으로 켜진다.
+     * */
+
+    private boolean isApOn(){
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        try{
+
+
+            Method method = wifiManager.getClass().getDeclaredMethod("isWifiApEnabled");
+            method.setAccessible(true);
+            Log.e("test","(Boolean) method.invoke(wifiManager) : " + (Boolean) method.invoke(wifiManager));
+            return (Boolean) method.invoke(wifiManager);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean configApState(){
+        WifiManager wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiConfiguration wifiConfiguration = null;
+        try{
+            if(isApOn()){
+                //wifiManager.setWifiEnabled(false);
+            }
+            Method method = wifiManager.getClass().getDeclaredMethod("setWifiApEnabled",WifiConfiguration.class,boolean.class);
+            method.invoke(wifiManager,wifiConfiguration,!isApOn());
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

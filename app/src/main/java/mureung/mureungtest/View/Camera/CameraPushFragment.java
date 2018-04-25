@@ -1,23 +1,18 @@
 package mureung.mureungtest.View.Camera;
 
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
-import android.media.FaceDetector;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,10 +29,9 @@ import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
-import mureung.mureungtest.Comunication.Bluetooth_Camera_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Camera_Protocol;
 import mureung.mureungtest.MainActivity;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;

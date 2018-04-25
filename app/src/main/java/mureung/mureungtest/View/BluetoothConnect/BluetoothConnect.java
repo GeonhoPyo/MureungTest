@@ -6,33 +6,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.NetworkInfo;
-import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import mureung.mureungtest.Comunication.Bluetooth_Camera_Protocol;
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
-import mureung.mureungtest.Comunication.BtList;
-import mureung.mureungtest.MainActivity;
+import mureung.mureungtest.Communication.Bluetooth_Camera_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.BtList;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;
 
-import static mureung.mureungtest.Comunication.Bluetooth_Protocol.bluetoothAdapter;
+import static mureung.mureungtest.Communication.Bluetooth_Protocol.bluetoothAdapter;
 
 /**
  * Created by user on 2018-01-29.

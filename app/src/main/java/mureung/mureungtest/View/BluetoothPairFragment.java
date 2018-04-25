@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
-import mureung.mureungtest.Comunication.Bluetooth_Protocol2;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol2;
 import mureung.mureungtest.PageStr;
 import mureung.mureungtest.R;
 

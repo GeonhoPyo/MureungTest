@@ -16,9 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.text.Line;
-
-import mureung.mureungtest.Comunication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.BluetoothPairFragment;
@@ -27,7 +25,7 @@ import mureung.mureungtest.View.Camera.CameraPullFragment;
 import mureung.mureungtest.View.Terminal.TerminalView;
 import mureung.mureungtest.View.Wifi.WifiTestFragment;
 
-import static mureung.mureungtest.Comunication.Bluetooth_Protocol.PidTestFlag;
+import static mureung.mureungtest.Communication.Bluetooth_Protocol.PidTestFlag;
 
 /**
  * Created by user on 2018-01-29.
