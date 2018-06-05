@@ -2,10 +2,12 @@ package mureung.mureungtest;
 
 import android.Manifest;
 import android.app.Activity;
+import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -46,7 +48,6 @@ public class MainActivity extends AppCompatActivity{
 
     public static WifiP2pManager wifiP2pManager ;
     //public static WifiP2pManager.Channel channel ;
-
 
 
     @Override
@@ -153,8 +154,14 @@ public class MainActivity extends AppCompatActivity{
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(broadcastReceiver, filter);*/
 
+        //this.registerReceiver(headsetReceiver,headsetReceiverIntentFilter);
+
+
 
     }
+
+
+
 
     @Override
     protected void onDestroy() {
@@ -268,7 +275,7 @@ public class MainActivity extends AppCompatActivity{
                                 android.Manifest.permission.SEND_SMS,                   // SMS 보내기, 보기
                                 android.Manifest.permission.READ_PHONE_STATE,           // 단말 정보 접근
                                 android.Manifest.permission.READ_SMS,                   // SMS 보내기, 보기
-                                android.Manifest.permission.MODIFY_AUDIO_SETTINGS},     // 오디오 설정
+                                android.Manifest.permission.MODIFY_AUDIO_SETTINGS},
                         1000);
             }
             //다른앱으로 그리기 권한은 설정창으로 이동해서 사용자가 직접 입력을 해야 바꿀수있음

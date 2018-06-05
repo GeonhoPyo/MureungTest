@@ -16,10 +16,11 @@ import android.view.WindowManager;
 
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class AcceptCallActivity extends Activity {
 
-
+    private static Logger logger = Logger.getLogger(String.valueOf(AcceptCallActivity.class));
 
     private static final String MANUFACTURER_HTC = "HTC";
 
@@ -86,14 +87,15 @@ public class AcceptCallActivity extends Activity {
         }
 
         try {
-            try {
 
+            try {
+                // logger.debug("execute input keycode headset hook");
                 Runtime.getRuntime().exec("input keyevent " +
                         Integer.toString(KeyEvent.KEYCODE_HEADSETHOOK));
 
             } catch (IOException e) {
                 // Runtime.exec(String) had an I/O problem, try to fall back
-
+                //    logger.debug("send keycode headset hook intents");
                 String enforcedPerm = "android.permission.CALL_PRIVILEGED";
                 Intent btnDown = new Intent(Intent.ACTION_MEDIA_BUTTON).putExtra(
                         Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN,

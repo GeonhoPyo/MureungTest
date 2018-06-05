@@ -13,6 +13,27 @@ import java.io.PrintWriter;
 
 public class ErrorLogManager {
 
+    public void saveErrorLog(String logToString){
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LOG/";
+        File file = new File(dirPath);
+
+        if (!file.exists()){
+            file.mkdirs();
+        }else{
+            File saveFile = new File(dirPath + "log.txt");
+            try {
+                BufferedWriter bfw = new BufferedWriter(new FileWriter(saveFile, true));
+                bfw.write(logToString);
+                bfw.write("\n");
+                bfw.flush();
+                bfw.close();
+            }catch (Exception e){
+
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void saveErrorLog(String fileName,String logToString){
 
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LOG/";

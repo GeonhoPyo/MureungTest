@@ -1,7 +1,15 @@
 package mureung.mureungtest;
 
+import android.annotation.SuppressLint;
+import android.app.Instrumentation;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +17,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +27,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+
+import mureung.mureungtest.Communication.AcceptCallActivity;
 import mureung.mureungtest.Communication.Bluetooth_Protocol;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
@@ -239,11 +254,39 @@ public class MainView extends Fragment implements View.OnClickListener {
                 break;*/
 
             case R.id.wifiTestButton :
-                ((MainActivity)getActivity()).mainChangeMenu(new WifiTestFragment());
+                //((MainActivity)getActivity()).mainChangeMenu(new WifiTestFragment());
+
+
+
+
+                Log.e("test","test 1111");
+                /*if(Build.VERSION.SDK_INT >= 21){
+                    Intent answerCalintent = new Intent(getContext(), AcceptCallActivity.class);
+                    answerCalintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    answerCalintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(answerCalintent);
+                }else {
+                    Intent intent = new Intent(getContext(), AcceptCallActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(intent);
+                }*/
+                /**
+                 *
+                 * 123213213
+                 *
+                 * */
+                /*v.setX(100);
+                v.setY(100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    v.callOnClick();
+                }*/
+
                 break;
 
         }
     }
+
 
     private void startVoltage(){
 
@@ -362,6 +405,8 @@ public class MainView extends Fragment implements View.OnClickListener {
             new mureung.mureungtest.Tool.DialogManager(getContext()).positiveDialog("DTC 고장 코드","P0101","확인",onClickListener);*/
         }
     }
+
+
 
 
 }
