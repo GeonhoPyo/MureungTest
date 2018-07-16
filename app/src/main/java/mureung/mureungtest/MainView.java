@@ -2,6 +2,8 @@ package mureung.mureungtest;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,9 +31,12 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import mureung.mureungtest.Communication.AcceptCallActivity;
 import mureung.mureungtest.Communication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.Bluetooth_Protocol3;
+import mureung.mureungtest.Communication.ConnectThread;
 import mureung.mureungtest.Tool.*;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.BluetoothPairFragment;
@@ -234,6 +239,12 @@ public class MainView extends Fragment implements View.OnClickListener {
 
             case R.id.bluetoothPairButton :
                 ((MainActivity)getActivity()).mainChangeMenu(new BluetoothPairFragment());
+                //new Bluetooth_Protocol().autoSearchBt(getContext(),);
+                //new Bluetooth_Protocol3().autoSearchBt();
+                /*Set<BluetoothDevice> pairedDevice = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+                for (BluetoothDevice device : pairedDevice){
+                    new ConnectThread(device,false).start();
+                }*/
                 break;
 
             case R.id.cameraPushButton:
