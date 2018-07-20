@@ -101,6 +101,8 @@ public class Bluetooth_Protocol {
 
     public static boolean Bluetooth1Connect_FLAG = false;
 
+    public static StringBuilder saveData=null;
+
     public Bluetooth_Protocol(Activity activity , Handler handler) {
         dataHandler = handler;
 
@@ -309,6 +311,8 @@ public class Bluetooth_Protocol {
 
 
 
+
+
         //통신에 필요한 Socket 을 선언 및 접속 하는 부분 = 블루투스 송수신 접속
         private ConnectedThread(BluetoothSocket socket) {
 
@@ -336,6 +340,8 @@ public class Bluetooth_Protocol {
             new MainView().setObdIcon(true);
             MainView.bluetoothState = true;
             Bluetooth1Connect_FLAG = true;
+
+            saveData = null;
 
 
 
@@ -604,10 +610,33 @@ public class Bluetooth_Protocol {
                                 }*/
                                 received_text = "";
                             }else {
+
+                                /**
+                                 * TODO
+                                 * 전체 PID 요청한다면 Response를 로그로 저장하는 기능
+                                 * saveData 에 값 저장하고
+                                 * */
+
+
                                 try {
                                     bypass_stream.NewStart(received_text);
                                 }catch (Exception e){
 
+                                }
+                                try {
+                                    if(MainView.PID != null){
+                                        if(MainView.PID.contains(new MainView().ALLPID)){
+                                            if(saveData == null){
+                                                saveData = new StringBuilder("TEST -------------");
+                                            }
+                                            received_text = received_text.replace("\r","");
+                                            saveData.append("\r\n").append(received_text);
+                                            //Log.e("test","test saveData = " + saveData);
+                                        }
+                                    }
+
+                                }catch (Exception e){
+                                    e.printStackTrace();
                                 }
 
                                 if(PidTestFlag){

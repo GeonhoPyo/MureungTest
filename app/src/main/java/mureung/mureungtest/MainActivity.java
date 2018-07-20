@@ -32,6 +32,8 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 
 import mureung.mureungtest.Communication.Bluetooth_Protocol;
+import mureung.mureungtest.Tool.ErrorLogManager;
+import mureung.mureungtest.Tool.Time_DataBridge;
 import mureung.mureungtest.View.BluetoothPairFragment;
 import mureung.mureungtest.View.PidTestView.PidTestMainView;
 import mureung.mureungtest.View.VoltageFragment;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity{
     BroadcastReceiver broadcastReceiver;
 
     public static WifiP2pManager wifiP2pManager ;
+    public static String VIN = null;
     //public static WifiP2pManager.Channel channel ;
 
 
@@ -195,6 +198,10 @@ public class MainActivity extends AppCompatActivity{
                 break;
             case PageStr.PidTestView :
                 mainChangeMenu(new MainView());
+                if(MainView.PID.contains(new MainView().ALLPID)){
+                    String data = "------------------------------------------------------------------------------ \r\n";
+                    new ErrorLogManager().saveErrorLog("DATA",String.valueOf(data+new Time_DataBridge().getDateTime()+"\r\n"+data+ "VIN : "+VIN+"\r\n"+data + Bluetooth_Protocol.saveData));
+                }
                 MainView.PID = null;
 
                 break;

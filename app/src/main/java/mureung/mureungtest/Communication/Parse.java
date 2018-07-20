@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import mureung.mureungtest.MainActivity;
+
 /**
  * Created by user on 2018-01-29.
  */
@@ -67,7 +69,7 @@ public class Parse {
             }
 
             Result = collection;
-
+            MainActivity.VIN = Result;
 
             // TODO VIN 크롤링을 위해 VIN저장
             //new Bluetooth_Protocol().startPidData();
