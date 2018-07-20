@@ -76,14 +76,11 @@ public class ConnectThread extends Thread {
 
 
 
-            /**
-             * 블루투스 연결 시도중 차량이 끊길경우 이때 끊기게 해줘야함 아니면 끊어지질 않음
-             * 근데 다시 차량이 연결되는경우는 큰일남
-             * */
+
             return;
         }
 
-
+        new Bluetooth_Protocol3().connectedThread(mSocket);
         //연결 스레드 run 부분을 다 통과하게 된다면 연결 후 통신 스레드 시작
 
 

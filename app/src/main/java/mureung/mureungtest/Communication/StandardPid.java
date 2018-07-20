@@ -92,6 +92,7 @@ public class StandardPid {
     };
 
     public String[] schedulePid = {
+            "03",
             "01490D",
             "01110C",
             "012310",
@@ -271,8 +272,7 @@ public class StandardPid {
             "01490D",
             "01110C",
             "012310",
-            "017808",
-            "03"
+            "017808"
 
     };
 

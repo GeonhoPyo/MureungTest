@@ -135,6 +135,7 @@ public class Bluetooth_Protocol3 {
             Log.e(TAG, "BEGIN mConnectThread");
 
             try {
+
                 mSocket.connect();
 
 
@@ -192,6 +193,10 @@ public class Bluetooth_Protocol3 {
         new ConnectThread(null,false).cancel();
     }
 
+    public void connectedThread(BluetoothSocket socket){
+        connected(socket);
+    }
+
 
 
 
@@ -240,7 +245,7 @@ public class Bluetooth_Protocol3 {
 
 
         //통신에 필요한 Socket 을 선언 및 접속 하는 부분 = 블루투스 송수신 접속
-        private ConnectedThread(BluetoothSocket socket) {
+        public ConnectedThread(BluetoothSocket socket) {
             Log.e(TAG, "create ConnectedThread");
             mmSocket = socket;
 
@@ -248,8 +253,11 @@ public class Bluetooth_Protocol3 {
             OutputStream tmpOut = null;
             //Log.e("ConnectedThread","mSocket "+mSocket);
             try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
+                if(socket != null){
+                    tmpIn = socket.getInputStream();
+                    tmpOut = socket.getOutputStream();
+                }
+
             } catch (IOException e) {
                 Log.e(TAG, "temp sockets not created", e);
             }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
@@ -30,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -239,12 +243,7 @@ public class MainView extends Fragment implements View.OnClickListener {
 
             case R.id.bluetoothPairButton :
                 ((MainActivity)getActivity()).mainChangeMenu(new BluetoothPairFragment());
-                //new Bluetooth_Protocol().autoSearchBt(getContext(),);
-                //new Bluetooth_Protocol3().autoSearchBt();
-                /*Set<BluetoothDevice> pairedDevice = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-                for (BluetoothDevice device : pairedDevice){
-                    new ConnectThread(device,false).start();
-                }*/
+                new Bluetooth_Protocol().autoSearchBt(getContext(),null);
                 break;
 
             case R.id.cameraPushButton:
@@ -297,6 +296,7 @@ public class MainView extends Fragment implements View.OnClickListener {
 
         }
     }
+
 
 
     private void startVoltage(){

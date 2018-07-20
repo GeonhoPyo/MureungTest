@@ -359,7 +359,7 @@ public class Bluetooth_Protocol {
                     //String 으로 변환
                     bytes = mmInStream.read(readBuffer,0,readBuffer.length);
                     final String strBuffer = new String(readBuffer,0,bytes,"UTF-8");
-                    Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
+                    //Log.e("bluetooth_protocol","strBuffer : "+strBuffer);
                     received_text += strBuffer;
 
                     if(!SETTING_FLAG){
@@ -705,7 +705,10 @@ public class Bluetooth_Protocol {
 
     public void pushATSetting(){
         try {
-            mConnectedThread.pushSettingATCommand();
+            if(mConnectedThread != null){
+                mConnectedThread.pushSettingATCommand();
+            }
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -837,7 +840,7 @@ public class Bluetooth_Protocol {
     // 값을 쓰는 부분(보내는 부분)
     public void write(byte[] out) {
         ConnectedThread r;
-        Log.e("test","write out : " + new String(out,0,out.length) );
+        //Log.e("test","write out : " + new String(out,0,out.length) );
         synchronized (this) {
             if (mState != STATE_CONNECTED){
                 return;
@@ -865,7 +868,7 @@ public class Bluetooth_Protocol {
             mConnectedThread.ATSPACE_FLAG = false;
         }
 
-        rePairBT(address,REPAIR_FLAG);
+        //rePairBT(address,REPAIR_FLAG);
     }
 
 
@@ -898,15 +901,6 @@ public class Bluetooth_Protocol {
 
     }
 
-    /**
-     *
-     *
-     * 블루투스 자동연결 리시버로 해결가능성 있어 보임
-     * 블루투스가 켜져있을경우 리시버를 이용해 블루투스 상태 파싱해서 가져온뒤
-     * 연결되었던적 있던 OBD device.address를 가져와서 실행
-     *
-     *
-     * */
 
     public void connectDevice(final BluetoothDevice device){
         Log.e("Bluetooth_Protocol","connectDevice");
@@ -916,15 +910,7 @@ public class Bluetooth_Protocol {
 
     }
 
-    public void bluetoothEnable (){
-        try {
-            bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            bluetoothAdapter.enable();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
 
-    }
 
     public void autoSearchBt(Context context, final String address){
         Log.e("autoSearchBt"," isDiscovering : "+bluetoothAdapter.isDiscovering());

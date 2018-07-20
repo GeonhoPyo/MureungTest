@@ -49,7 +49,7 @@
         <receiver
             android:name=".Communication.Device_Stream"
             android:label="Device_Stream">
-            <intent-filter>
+            <!--<intent-filter>
 
 
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
@@ -65,7 +65,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
+            </intent-filter>-->
         </receiver>
         <activity android:name=".MainActivity"
             tools:ignore="InnerclassSeparator"
