@@ -243,14 +243,7 @@ public class MainActivity extends AppCompatActivity{
                     !isPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
                     !isPermission(context, Manifest.permission.CAMERA) ||
                     !isPermission(context, Manifest.permission.RECORD_AUDIO) ||
-                    !isPermission(context, Manifest.permission.CALL_PHONE) ||
-                    !isPermission(context, Manifest.permission.READ_CONTACTS) ||
-                    !isPermission(context, Manifest.permission.READ_CALL_LOG) ||
-                    !isPermission(context, Manifest.permission.WRITE_CALL_LOG) ||
-                    !isPermission(context, Manifest.permission.RECEIVE_SMS) ||
-                    !isPermission(context, Manifest.permission.SEND_SMS) ||
-                    !isPermission(context, Manifest.permission.READ_PHONE_STATE) ||
-                    !isPermission(context, Manifest.permission.READ_SMS) ||
+
                     !isPermission(context, Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_COARSE_LOCATION) ||
@@ -258,14 +251,7 @@ public class MainActivity extends AppCompatActivity{
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CAMERA) ||
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.RECORD_AUDIO) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.CALL_PHONE) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_CONTACTS) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_CALL_LOG) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.WRITE_CALL_LOG) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.RECEIVE_SMS) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.SEND_SMS) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_PHONE_STATE) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.READ_SMS) ||
+
                         ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
                 }
                 ActivityCompat.requestPermissions((Activity)context,new String[]{
@@ -276,13 +262,6 @@ public class MainActivity extends AppCompatActivity{
                                 android.Manifest.permission.CAMERA,                     // 사진 찍기, 비디오 녹화
                                 android.Manifest.permission.RECORD_AUDIO,               // 오디오 녹음
                                 android.Manifest.permission.CALL_PHONE,                 // 전화 걸기, 관리
-                                android.Manifest.permission.READ_CONTACTS,              // Contacts 관리
-                                android.Manifest.permission.READ_CALL_LOG,              // 전화 걸기, 관리
-                                android.Manifest.permission.WRITE_CALL_LOG,             // 전화 걸기, 관리
-                                android.Manifest.permission.RECEIVE_SMS,                // SMS 보내기, 보기
-                                android.Manifest.permission.SEND_SMS,                   // SMS 보내기, 보기
-                                android.Manifest.permission.READ_PHONE_STATE,           // 단말 정보 접근
-                                android.Manifest.permission.READ_SMS,                   // SMS 보내기, 보기
                                 android.Manifest.permission.MODIFY_AUDIO_SETTINGS},
                         1000);
             }

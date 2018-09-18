@@ -34,6 +34,39 @@ public class ErrorLogManager {
         }
     }
 
+    public void saveDeviceRotationErrorLog( String logToString){
+
+        try {
+            String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LOG/";
+            File file = new File(dirPath);
+
+            if (!file.exists()){
+                file.mkdirs();
+            }else{
+                File saveFile = new File(dirPath + "Rotation.txt");
+                try {
+                    BufferedWriter bfw = new BufferedWriter(new FileWriter(saveFile, true));
+                    bfw.write(logToString);
+                    bfw.write("\n");
+                    bfw.flush();
+                    bfw.close();
+                }catch (Exception e){
+
+                    e.printStackTrace();
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+
+
     public void saveErrorLog(String fileName,String logToString){
 
         String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LOG/";
