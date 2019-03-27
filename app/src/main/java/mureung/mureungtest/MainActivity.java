@@ -32,6 +32,8 @@ import android.widget.Toast;
 import java.lang.reflect.Method;
 
 import mureung.mureungtest.Communication.Bluetooth_Protocol;
+import mureung.mureungtest.Communication.WifiConnection;
+import mureung.mureungtest.Tool.Dlog;
 import mureung.mureungtest.Tool.ErrorLogManager;
 import mureung.mureungtest.Tool.Time_DataBridge;
 import mureung.mureungtest.View.BluetoothPairFragment;
@@ -160,6 +162,8 @@ public class MainActivity extends AppCompatActivity{
         //this.registerReceiver(headsetReceiver,headsetReceiverIntentFilter);
 
 
+        /*Dlog.e("WifiConnection Test Start");
+        new WifiConnection().startWifiScan(getBaseContext());*/
 
 
     }

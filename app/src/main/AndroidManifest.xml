@@ -29,8 +29,13 @@
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 
     <application
+        android:name=".Tool.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/app_ic"
         android:label="@string/app_name"
@@ -38,7 +43,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="false"
-        >
+        android:fullBackupContent="@xml/backup_descriptor">
         <activity android:name=".Communication.AcceptCallActivity"
             android:launchMode="singleTop"
             android:excludeFromRecents="true"
@@ -77,6 +82,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".Communication.BluetoothTest"
+            android:enabled="true"/>
 
     </application>
 

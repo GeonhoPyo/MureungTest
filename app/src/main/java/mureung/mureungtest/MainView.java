@@ -1,30 +1,15 @@
 package mureung.mureungtest;
 
-import android.annotation.SuppressLint;
-import android.app.Instrumentation;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,22 +17,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import mureung.mureungtest.Communication.AcceptCallActivity;
 import mureung.mureungtest.Communication.Bluetooth_Protocol;
-import mureung.mureungtest.Communication.Bluetooth_Protocol3;
-import mureung.mureungtest.Communication.ConnectThread;
-import mureung.mureungtest.Tool.*;
+import mureung.mureungtest.Tool.MakeData;
 import mureung.mureungtest.View.BluetoothConnect.BluetoothConnect;
 import mureung.mureungtest.View.BluetoothPairFragment;
-import mureung.mureungtest.View.Camera.CameraPushFragment;
 import mureung.mureungtest.View.Camera.CameraPullFragment;
+import mureung.mureungtest.View.Camera.CameraPushFragment;
 import mureung.mureungtest.View.Terminal.TerminalView;
-import mureung.mureungtest.View.Wifi.WifiTestFragment;
 
 import static mureung.mureungtest.Communication.Bluetooth_Protocol.PidTestFlag;
 
